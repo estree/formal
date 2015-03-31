@@ -1,0 +1,3 @@
+[submodule "estree"]
+	path = estree
+	url = https://github.com/estree/estree.git

@@ -1,0 +1,930 @@
+{
+  "Program": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "Program"
+      },
+      "body": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "Statement"
+        }
+      },
+      "sourceType": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "literal",
+            "value": "script"
+          },
+          {
+            "kind": "literal",
+            "value": "module"
+          }
+        ]
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "Function": {
+    "kind": "interface",
+    "props": {
+      "id": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Identifier"
+          },
+          {
+            "kind": "literal",
+            "value": null
+          }
+        ]
+      },
+      "params": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "Pattern"
+        }
+      },
+      "body": {
+        "kind": "reference",
+        "name": "BlockStatement"
+      },
+      "generator": {
+        "kind": "reference",
+        "name": "boolean"
+      },
+      "expression": {
+        "kind": "literal",
+        "value": false
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ForOfStatement": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ForOfStatement"
+      }
+    },
+    "base": [
+      "ForInStatement"
+    ]
+  },
+  "VariableDeclaration": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "VariableDeclaration"
+      },
+      "declarations": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "VariableDeclarator"
+        }
+      },
+      "kind": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "union",
+            "types": [
+              {
+                "kind": "literal",
+                "value": "var"
+              },
+              {
+                "kind": "literal",
+                "value": "let"
+              }
+            ]
+          },
+          {
+            "kind": "literal",
+            "value": "const"
+          }
+        ]
+      }
+    },
+    "base": [
+      "Declaration"
+    ]
+  },
+  "Super": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "Super"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "CallExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "CallExpression"
+      },
+      "callee": {
+        "kind": "reference",
+        "name": "Expression"
+      },
+      "arguments": {
+        "kind": "array",
+        "base": {
+          "kind": "union",
+          "types": [
+            {
+              "kind": "reference",
+              "name": "Expression"
+            },
+            {
+              "kind": "reference",
+              "name": "SpreadElement"
+            }
+          ]
+        }
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "MemberExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "MemberExpression"
+      },
+      "object": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Expression"
+          },
+          {
+            "kind": "reference",
+            "name": "Super"
+          }
+        ]
+      },
+      "property": {
+        "kind": "reference",
+        "name": "Expression"
+      },
+      "computed": {
+        "kind": "reference",
+        "name": "boolean"
+      }
+    },
+    "base": [
+      "Expression",
+      "Pattern"
+    ]
+  },
+  "SpreadElement": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "SpreadElement"
+      },
+      "argument": {
+        "kind": "reference",
+        "name": "Expression"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ArrayExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ArrayExpression"
+      },
+      "elements": {
+        "kind": "array",
+        "base": {
+          "kind": "union",
+          "types": [
+            {
+              "kind": "union",
+              "types": [
+                {
+                  "kind": "reference",
+                  "name": "Expression"
+                },
+                {
+                  "kind": "reference",
+                  "name": "SpreadElement"
+                }
+              ]
+            },
+            {
+              "kind": "literal",
+              "value": null
+            }
+          ]
+        }
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "AssignmentExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "AssignmentExpression"
+      },
+      "operator": {
+        "kind": "reference",
+        "name": "AssignmentOperator"
+      },
+      "left": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Pattern"
+          },
+          {
+            "kind": "reference",
+            "name": "MemberExpression"
+          }
+        ]
+      },
+      "right": {
+        "kind": "reference",
+        "name": "Expression"
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "Property": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "Property"
+      },
+      "key": {
+        "kind": "reference",
+        "name": "Expression"
+      },
+      "value": {
+        "kind": "reference",
+        "name": "Expression"
+      },
+      "kind": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "union",
+            "types": [
+              {
+                "kind": "literal",
+                "value": "init"
+              },
+              {
+                "kind": "literal",
+                "value": "get"
+              }
+            ]
+          },
+          {
+            "kind": "literal",
+            "value": "set"
+          }
+        ]
+      },
+      "method": {
+        "kind": "reference",
+        "name": "boolean"
+      },
+      "shorthand": {
+        "kind": "reference",
+        "name": "boolean"
+      },
+      "computed": {
+        "kind": "reference",
+        "name": "boolean"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ArrowFunctionExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ArrowFunctionExpression"
+      },
+      "body": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "BlockStatement"
+          },
+          {
+            "kind": "reference",
+            "name": "Expression"
+          }
+        ]
+      },
+      "expression": {
+        "kind": "reference",
+        "name": "boolean"
+      }
+    },
+    "base": [
+      "Function",
+      "Expression"
+    ]
+  },
+  "YieldExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "YieldExpression"
+      },
+      "argument": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Expression"
+          },
+          {
+            "kind": "literal",
+            "value": null
+          }
+        ]
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "TemplateLiteral": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "TemplateLiteral"
+      },
+      "quasis": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "TemplateElement"
+        }
+      },
+      "expressions": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "Expression"
+        }
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "TaggedTemplateExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "TaggedTemplateExpression"
+      },
+      "tag": {
+        "kind": "reference",
+        "name": "Expression"
+      },
+      "quasi": {
+        "kind": "reference",
+        "name": "TemplateLiteral"
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "TemplateElement": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "TemplateElement"
+      },
+      "tail": {
+        "kind": "reference",
+        "name": "boolean"
+      },
+      "value": {
+        "kind": "object",
+        "items": {
+          "cooked": {
+            "kind": "reference",
+            "name": "string"
+          },
+          "value": {
+            "kind": "reference",
+            "name": "string"
+          }
+        }
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "AssignmentProperty": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "Property"
+      },
+      "value": {
+        "kind": "reference",
+        "name": "Pattern"
+      },
+      "kind": {
+        "kind": "literal",
+        "value": "init"
+      },
+      "method": {
+        "kind": "literal",
+        "value": false
+      }
+    },
+    "base": [
+      "Property"
+    ]
+  },
+  "ObjectPattern": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ObjectPattern"
+      },
+      "properties": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "AssignmentProperty"
+        }
+      }
+    },
+    "base": [
+      "Pattern"
+    ]
+  },
+  "ArrayPattern": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ArrayPattern"
+      },
+      "elements": {
+        "kind": "array",
+        "base": {
+          "kind": "union",
+          "types": [
+            {
+              "kind": "reference",
+              "name": "Pattern"
+            },
+            {
+              "kind": "literal",
+              "value": null
+            }
+          ]
+        }
+      }
+    },
+    "base": [
+      "Pattern"
+    ]
+  },
+  "RestElement": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "RestElement"
+      },
+      "argument": {
+        "kind": "reference",
+        "name": "Pattern"
+      }
+    },
+    "base": [
+      "Pattern"
+    ]
+  },
+  "AssignmentPattern": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "AssignmentPattern"
+      },
+      "left": {
+        "kind": "reference",
+        "name": "Pattern"
+      },
+      "right": {
+        "kind": "reference",
+        "name": "Expression"
+      }
+    },
+    "base": [
+      "Pattern"
+    ]
+  },
+  "Class": {
+    "kind": "interface",
+    "props": {
+      "id": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Identifier"
+          },
+          {
+            "kind": "literal",
+            "value": null
+          }
+        ]
+      },
+      "superClass": {
+        "kind": "reference",
+        "name": "Expression"
+      },
+      "body": {
+        "kind": "reference",
+        "name": "ClassBody"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ClassBody": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ClassBody"
+      },
+      "body": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "MethodDefinition"
+        }
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "MethodDefinition": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "MethodDefinition"
+      },
+      "key": {
+        "kind": "reference",
+        "name": "Identifier"
+      },
+      "value": {
+        "kind": "reference",
+        "name": "FunctionExpression"
+      },
+      "kind": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "union",
+            "types": [
+              {
+                "kind": "union",
+                "types": [
+                  {
+                    "kind": "literal",
+                    "value": "constructor"
+                  },
+                  {
+                    "kind": "literal",
+                    "value": "method"
+                  }
+                ]
+              },
+              {
+                "kind": "literal",
+                "value": "get"
+              }
+            ]
+          },
+          {
+            "kind": "literal",
+            "value": "set"
+          }
+        ]
+      },
+      "computed": {
+        "kind": "reference",
+        "name": "boolean"
+      },
+      "static": {
+        "kind": "reference",
+        "name": "boolean"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ClassDeclaration": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ClassDeclaration"
+      },
+      "id": {
+        "kind": "reference",
+        "name": "Identifier"
+      }
+    },
+    "base": [
+      "Class",
+      "Declaration"
+    ]
+  },
+  "ClassExpression": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ClassExpression"
+      }
+    },
+    "base": [
+      "Class",
+      "Expression"
+    ]
+  },
+  "MetaProperty": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "MetaProperty"
+      },
+      "meta": {
+        "kind": "reference",
+        "name": "Identifier"
+      },
+      "property": {
+        "kind": "reference",
+        "name": "Identifier"
+      }
+    },
+    "base": [
+      "Expression"
+    ]
+  },
+  "ImportDeclaration": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ImportDeclaration"
+      },
+      "specifiers": {
+        "kind": "array",
+        "base": {
+          "kind": "union",
+          "types": [
+            {
+              "kind": "union",
+              "types": [
+                {
+                  "kind": "reference",
+                  "name": "ImportSpecifier"
+                },
+                {
+                  "kind": "reference",
+                  "name": "ImportDefaultSpecifier"
+                }
+              ]
+            },
+            {
+              "kind": "reference",
+              "name": "ImportNamespaceSpecifier"
+            }
+          ]
+        }
+      },
+      "source": {
+        "kind": "reference",
+        "name": "Literal"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ImportSpecifier": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ImportSpecifier"
+      },
+      "imported": {
+        "kind": "reference",
+        "name": "Identifier"
+      },
+      "local": {
+        "kind": "reference",
+        "name": "Identifier"
+      }
+    },
+    "base": []
+  },
+  "ImportDefaultSpecifier": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ImportDefaultSpecifier"
+      },
+      "local": {
+        "kind": "reference",
+        "name": "Identifier"
+      }
+    },
+    "base": []
+  },
+  "ImportNamespaceSpecifier": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ImportNamespaceSpecifier"
+      },
+      "local": {
+        "kind": "reference",
+        "name": "Identifier"
+      }
+    },
+    "base": []
+  },
+  "ExportNamedDeclaration": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ExportNamedDeclaration"
+      },
+      "declaration": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Declaration"
+          },
+          {
+            "kind": "literal",
+            "value": null
+          }
+        ]
+      },
+      "specifiers": {
+        "kind": "array",
+        "base": {
+          "kind": "reference",
+          "name": "ExportSpecifier"
+        }
+      },
+      "source": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Literal"
+          },
+          {
+            "kind": "literal",
+            "value": null
+          }
+        ]
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ExportSpecifier": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ExportSpecifier"
+      },
+      "exported": {
+        "kind": "reference",
+        "name": "Identifier"
+      },
+      "local": {
+        "kind": "reference",
+        "name": "Identifier"
+      }
+    },
+    "base": []
+  },
+  "ExportDefaultDeclaration": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ExportDefaultDeclaration"
+      },
+      "declaration": {
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Declaration"
+          },
+          {
+            "kind": "reference",
+            "name": "Expression"
+          }
+        ]
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  },
+  "ExportAllDeclaration": {
+    "kind": "interface",
+    "props": {
+      "type": {
+        "kind": "literal",
+        "value": "ExportAllDeclaration"
+      },
+      "source": {
+        "kind": "reference",
+        "name": "Literal"
+      }
+    },
+    "base": [
+      "Node"
+    ]
+  }
+}
