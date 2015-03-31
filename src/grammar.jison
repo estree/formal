@@ -83,7 +83,7 @@ prop
 
 type
     : type '|' type {
-      if ($$.type !== 'union') $$ = {kind: 'union', types: [$$]};
+      if ($$.kind !== 'union') $$ = {kind: 'union', types: [$$]};
       $$.types.push($type2);
     }
     | literal -> {kind: 'literal', value: $literal}

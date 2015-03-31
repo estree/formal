@@ -19,6 +19,14 @@ var parseSpec = require("./grammar").parse;
 
 var rootDir = "" + __dirname + "/..";
 
+function merge() {
+	for (var _len = arguments.length, objects = Array(_len), _key = 0; _key < _len; _key++) {
+		objects[_key] = arguments[_key];
+	}
+
+	return extend.apply(undefined, [Object.create(null)].concat(objects));
+}
+
 function readSpec(name) {
 	return readFile("" + rootDir + "/estree/" + name + ".md", "utf-8").then(lexMarkdown).filter(function (token) {
 		return token.type === "code";
@@ -29,17 +37,20 @@ function readSpec(name) {
 	});
 }
 
-function resolveExtends(target, base) {
-	for (var _name in target) {
-		var item = target[_name];
+function resolveExtends(extension, base) {
+	var result = merge(base);
+	for (var _name in extension) {
+		var item = extension[_name];
 		if (item.kind === "interface" && !item.base) {
-			var baseItem = base[_name];
-			item.type = item.type || baseItem.type;
-			item.props = extend(Object.create(null), baseItem.props, item.props);
-			item.base = baseItem.base;
+			var baseItem = result[_name];
+			result[_name] = merge(baseItem, {
+				props: merge(baseItem.props, item.props)
+			});
+		} else {
+			result[_name] = item;
 		}
 	}
-	return target;
+	return result;
 }
 
 function writeSpec(name, spec) {

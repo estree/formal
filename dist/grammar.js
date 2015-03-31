@@ -114,7 +114,7 @@ this.$ = {name: $$[$0-3], value: $$[$0-1]};
 break;
 case 12:
 
-      if (this.$.type !== 'union') this.$ = {kind: 'union', types: [this.$]};
+      if (this.$.kind !== 'union') this.$ = {kind: 'union', types: [this.$]};
       this.$.types.push($$[$0]);
     
 break;

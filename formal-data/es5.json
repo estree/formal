@@ -460,17 +460,12 @@
         "kind": "union",
         "types": [
           {
-            "kind": "union",
-            "types": [
-              {
-                "kind": "reference",
-                "name": "VariableDeclaration"
-              },
-              {
-                "kind": "reference",
-                "name": "Expression"
-              }
-            ]
+            "kind": "reference",
+            "name": "VariableDeclaration"
+          },
+          {
+            "kind": "reference",
+            "name": "Expression"
           },
           {
             "kind": "literal",
@@ -728,17 +723,12 @@
         "kind": "union",
         "types": [
           {
-            "kind": "union",
-            "types": [
-              {
-                "kind": "literal",
-                "value": "init"
-              },
-              {
-                "kind": "literal",
-                "value": "get"
-              }
-            ]
+            "kind": "literal",
+            "value": "init"
+          },
+          {
+            "kind": "literal",
+            "value": "get"
           },
           {
             "kind": "literal",
@@ -1088,35 +1078,20 @@
         "kind": "union",
         "types": [
           {
-            "kind": "union",
-            "types": [
-              {
-                "kind": "union",
-                "types": [
-                  {
-                    "kind": "union",
-                    "types": [
-                      {
-                        "kind": "reference",
-                        "name": "string"
-                      },
-                      {
-                        "kind": "reference",
-                        "name": "boolean"
-                      }
-                    ]
-                  },
-                  {
-                    "kind": "literal",
-                    "value": null
-                  }
-                ]
-              },
-              {
-                "kind": "reference",
-                "name": "number"
-              }
-            ]
+            "kind": "reference",
+            "name": "string"
+          },
+          {
+            "kind": "reference",
+            "name": "boolean"
+          },
+          {
+            "kind": "literal",
+            "value": null
+          },
+          {
+            "kind": "reference",
+            "name": "number"
           },
           {
             "kind": "reference",

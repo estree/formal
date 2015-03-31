@@ -6,6 +6,10 @@ import {parse as parseSpec} from './grammar';
 
 var rootDir = `${__dirname}/..`;
 
+function merge(...objects) {
+	return extend(Object.create(null), ...objects);
+}
+
 function readSpec(name) {
 	return readFile(`${rootDir}/estree/${name}.md`, 'utf-8')
 		.then(lexMarkdown)
@@ -15,17 +19,20 @@ function readSpec(name) {
 		.then(chunks => parseSpec(chunks.join('\n')));
 }
 
-function resolveExtends(target, base) {
-	for (let name in target) {
-		let item = target[name];
+function resolveExtends(extension, base) {
+	var result = merge(base);
+	for (let name in extension) {
+		let item = extension[name];
 		if (item.kind === 'interface' && !item.base) {
 			let baseItem = base[name];
-			item.type = item.type || baseItem.type;
-			item.props = extend(Object.create(null), baseItem.props, item.props);
-			item.base = baseItem.base;
+			result[name] = merge(baseItem, {
+				props: merge(baseItem.props, item.props)
+			});
+		} else {
+			result[name] = item;
 		}
 	}
-	return target;
+	return result;
 }
 
 function writeSpec(name, spec) {
