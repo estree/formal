@@ -6,4 +6,4 @@ This is a simple ESTree spec parser from Markdown files and formal JSON generato
 It consists of:
 * [spec grammar](https://github.com/estree/formal/blob/master/src/grammar.jison)
 * [translation code](https://github.com/estree/formal/blob/master/src/index.js)
-* [generated JSON files](https://github.com/estree/formal/tree/master/formal-data)
+* [generated self-contained JSON representations](https://github.com/estree/formal/tree/master/formal-data)
