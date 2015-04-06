@@ -1,19 +1,19 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var Promise = _interopRequire(require("bluebird"));
-
-var _fs = require("fs");
-
-var readFile = _fs.readFile;
-var writeFile = _fs.writeFile;
-
-readFile = Promise.promisify(readFile);
-writeFile = Promise.promisify(writeFile);
-
-exports.readFile = readFile;
-exports.writeFile = writeFile;
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
+
+var _Promise = require('bluebird');
+
+var _Promise2 = _interopRequireWildcard(_Promise);
+
+var _readFile$writeFile = require('fs');
+
+var readFileAsync = _Promise2['default'].promisify(_readFile$writeFile.readFile);
+var writeFileAsync = _Promise2['default'].promisify(_readFile$writeFile.writeFile);
+
+exports.readFile = readFileAsync;
+exports.writeFile = writeFileAsync;

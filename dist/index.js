@@ -1,41 +1,44 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; for (var _iterator = arr[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) { _arr.push(_step.value); if (i && _arr.length === i) break; } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
+var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
 
-var extend = _interopRequire(require("object-assign"));
+var _extend = require('object-assign');
 
-var Promise = _interopRequire(require("bluebird"));
+var _extend2 = _interopRequireWildcard(_extend);
 
-var _fs = require("./fs");
+var _Promise = require('bluebird');
 
-var readFile = _fs.readFile;
-var writeFile = _fs.writeFile;
+var _Promise2 = _interopRequireWildcard(_Promise);
 
-var lexMarkdown = require("marked").lexer;
+var _readFile$writeFile = require('./fs');
 
-var parseSpec = require("./grammar").parse;
+var _lexMarkdown = require('marked');
 
-var toTypeScriptDef = _interopRequire(require("./to-dts"));
+var _parseSpec = require('./grammar');
 
-var rootDir = "" + __dirname + "/..";
+var _toTypeScriptDef = require('./to-dts');
+
+var _toTypeScriptDef2 = _interopRequireWildcard(_toTypeScriptDef);
+
+var rootDir = '' + __dirname + '/..';
 
 function merge() {
 	for (var _len = arguments.length, objects = Array(_len), _key = 0; _key < _len; _key++) {
 		objects[_key] = arguments[_key];
 	}
 
-	return extend.apply(undefined, [Object.create(null)].concat(objects));
+	return _extend2['default'].apply(undefined, [Object.create(null)].concat(objects));
 }
 
 function readSpec(name) {
-	return readFile("" + rootDir + "/estree/" + name + ".md", "utf-8").then(lexMarkdown).filter(function (token) {
-		return token.type === "code";
+	return _readFile$writeFile.readFile('' + rootDir + '/estree/' + name + '.md', 'utf-8').then(_lexMarkdown.lexer).filter(function (token) {
+		return token.type === 'code';
 	}).map(function (token) {
 		return token.text;
 	}).all().then(function (chunks) {
-		return parseSpec(chunks.join("\n"));
+		return _parseSpec.parse(chunks.join('\n'));
 	});
 }
 
@@ -43,7 +46,7 @@ function resolveExtends(extension, base) {
 	var result = merge(base);
 	for (var _name in extension) {
 		var item = extension[_name];
-		if (item.kind === "interface" && !item.base) {
+		if (item.kind === 'interface' && !item.base) {
 			var baseItem = base[_name];
 			result[_name] = merge(baseItem, {
 				props: merge(baseItem.props, item.props)
@@ -57,12 +60,12 @@ function resolveExtends(extension, base) {
 
 function writeSpec(name, spec) {
 	return spec.then(function (spec) {
-		return Promise.all([writeFile("" + rootDir + "/formal-data/typescript/" + name + ".d.ts", toTypeScriptDef(spec)), writeFile("" + rootDir + "/formal-data/" + name + ".json", JSON.stringify(spec, null, 2))]);
+		return _Promise2['default'].all([_readFile$writeFile.writeFile('' + rootDir + '/formal-data/typescript/' + name + '.d.ts', _toTypeScriptDef2['default'](spec)), _readFile$writeFile.writeFile('' + rootDir + '/formal-data/' + name + '.json', JSON.stringify(spec, null, 2))]);
 	});
 }
 
-var es5 = readSpec("spec");
-var es6 = Promise.all([readSpec("es6"), es5]).then(function (_ref) {
+var es5 = readSpec('spec');
+var es6 = _Promise2['default'].all([readSpec('es6'), es5]).then(function (_ref) {
 	var _ref2 = _slicedToArray(_ref, 2);
 
 	var es6 = _ref2[0];
@@ -70,5 +73,5 @@ var es6 = Promise.all([readSpec("es6"), es5]).then(function (_ref) {
 	return resolveExtends(es6, es5);
 });
 
-writeSpec("es5", es5);
-writeSpec("es6", es6);
+writeSpec('es5', es5);
+writeSpec('es6', es6);

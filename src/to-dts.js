@@ -56,6 +56,9 @@ var typeProcessors = {
 		indent(() => {
 			for (let propName in items) {
 				let prop = items[propName];
+				if (prop.kind === 'union' && prop.types.some(({kind, value}) => kind === 'literal' && value === null)) {
+					propName += '?';
+				}
 				result += indentation + `${propName}: ${processType(prop)};\n`;
 			}
 		});

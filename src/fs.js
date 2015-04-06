@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 
 import {readFile, writeFile} from 'fs';
 
-readFile = Promise.promisify(readFile);
-writeFile = Promise.promisify(writeFile);
+var readFileAsync = Promise.promisify(readFile);
+var writeFileAsync = Promise.promisify(writeFile);
 
-export {readFile, writeFile};
+export {readFileAsync as readFile, writeFileAsync as writeFile};

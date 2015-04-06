@@ -1,11 +1,11 @@
 declare module ESTree {
   interface Node {
     type: string;
-    loc: SourceLocation;
+    loc?: SourceLocation;
   }
 
   interface SourceLocation {
-    source: string;
+    source?: string;
     start: Position;
     end: Position;
   }
@@ -20,7 +20,7 @@ declare module ESTree {
   }
 
   interface Function extends Node {
-    id: Identifier;
+    id?: Identifier;
     params: Array<Pattern>;
     body: BlockStatement;
     generator: boolean;
@@ -42,7 +42,7 @@ declare module ESTree {
   interface IfStatement extends Statement {
     test: Expression;
     consequent: Statement;
-    alternate: Statement;
+    alternate?: Statement;
   }
 
   interface LabeledStatement extends Statement {
@@ -51,11 +51,11 @@ declare module ESTree {
   }
 
   interface BreakStatement extends Statement {
-    label: Identifier;
+    label?: Identifier;
   }
 
   interface ContinueStatement extends Statement {
-    label: Identifier;
+    label?: Identifier;
   }
 
   interface WithStatement extends Statement {
@@ -70,7 +70,7 @@ declare module ESTree {
   }
 
   interface ReturnStatement extends Statement {
-    argument: Expression;
+    argument?: Expression;
   }
 
   interface ThrowStatement extends Statement {
@@ -79,8 +79,8 @@ declare module ESTree {
 
   interface TryStatement extends Statement {
     block: BlockStatement;
-    handler: CatchClause;
-    finalizer: BlockStatement;
+    handler?: CatchClause;
+    finalizer?: BlockStatement;
   }
 
   interface WhileStatement extends Statement {
@@ -94,9 +94,9 @@ declare module ESTree {
   }
 
   interface ForStatement extends Statement {
-    init: VariableDeclaration | Expression;
-    test: Expression;
-    update: Expression;
+    init?: VariableDeclaration | Expression;
+    test?: Expression;
+    update?: Expression;
     body: Statement;
   }
 
@@ -121,7 +121,7 @@ declare module ESTree {
 
   interface VariableDeclarator extends Node {
     id: Pattern;
-    init: Expression;
+    init?: Expression;
   }
 
   interface Expression extends Node {}
@@ -200,7 +200,7 @@ declare module ESTree {
   interface Pattern extends Node {}
 
   interface SwitchCase extends Node {
-    test: Expression;
+    test?: Expression;
     consequent: Array<Statement>;
   }
 
@@ -215,7 +215,7 @@ declare module ESTree {
   }
 
   interface Literal extends Node, Expression {
-    value: string | boolean | number | RegExp;
+    value?: string | boolean | number | RegExp;
   }
 
   interface RegexLiteral extends Literal {

@@ -1,11 +1,14 @@
-"use strict";
+'use strict';
 
-module.exports = toTypeScriptDef;
-var indentation = "";
+Object.defineProperty(exports, '__esModule', {
+	value: true
+});
+exports['default'] = toTypeScriptDef;
+var indentation = '';
 
 function indent(callback) {
 	var old = indentation;
-	indentation += "  ";
+	indentation += '  ';
 	var result = callback();
 	indentation = old;
 	return result;
@@ -13,7 +16,7 @@ function indent(callback) {
 
 // Processors for top-level definitons.
 var topProcessors = {
-	"enum": function _enum(name, _ref) {
+	'enum': function _enum(name, _ref) {
 		var values = _ref.values;
 
 		// TypeScript doesn't allow enums of literals, so we need to create type union instead.
@@ -21,65 +24,72 @@ var topProcessors = {
 			set[typeof value] = true;
 			return set;
 		}, {});
-		return "type " + name + " = " + Object.keys(types).join(" | ") + ";";
+		return 'type ' + name + ' = ' + Object.keys(types).join(' | ') + ';';
 	},
 
-	"interface": function _interface(name, _ref) {
-		var base = _ref.base;
-		var props = _ref.props;
+	'interface': function _interface(name, _ref2) {
+		var base = _ref2.base;
+		var props = _ref2.props;
 
-		var result = "interface " + name + " ";
+		var result = 'interface ' + name + ' ';
 		if (base.length) {
-			result += "extends " + base.join(", ") + " ";
+			result += 'extends ' + base.join(', ') + ' ';
 		}
 		var items = Object.create(null),
 		    hasItems = false;
 		for (var prop in props) {
 			// Filter out useless "type: string" from desdendant types.
-			if (name === "Node" || prop !== "type") {
+			if (name === 'Node' || prop !== 'type') {
 				items[prop] = props[prop];
 				hasItems = true;
 			}
 		}
-		return result + (hasItems ? typeProcessors.object({ items: items }) : "{}");
+		return result + (hasItems ? typeProcessors.object({ items: items }) : '{}');
 	}
 };
 
 // Processors (code generators) for specific types.
 var typeProcessors = {
-	literal: function (_ref) {
-		var value = _ref.value;
-		return value === null ? "any" : typeof value;
+	literal: function literal(_ref3) {
+		var value = _ref3.value;
+		return value === null ? 'any' : typeof value;
 	},
 
-	reference: function (_ref) {
-		var name = _ref.name;
+	reference: function reference(_ref4) {
+		var name = _ref4.name;
 		return name;
 	},
 
-	array: function (_ref) {
-		var base = _ref.base;
-		return "Array<" + processType(base) + ">";
+	array: function array(_ref5) {
+		var base = _ref5.base;
+		return 'Array<' + processType(base) + '>';
 	},
 
-	union: function (_ref) {
-		var types = _ref.types;
+	union: function union(_ref6) {
+		var types = _ref6.types;
 		return types.map(processType).filter(function (type) {
-			return type !== "any";
-		}).join(" | ") || "any";
+			return type !== 'any';
+		}).join(' | ') || 'any';
 	},
 
-	object: function (_ref) {
-		var items = _ref.items;
+	object: function object(_ref7) {
+		var items = _ref7.items;
 
-		var result = "{\n";
+		var result = '{\n';
 		indent(function () {
 			for (var propName in items) {
 				var prop = items[propName];
-				result += indentation + ("" + propName + ": " + processType(prop) + ";\n");
+				if (prop.kind === 'union' && prop.types.some(function (_ref8) {
+					var kind = _ref8.kind;
+					var value = _ref8.value;
+					return kind === 'literal' && value === null;
+				})) {
+					propName += '?';
+				}
+				result += indentation + ('' + propName + ': ' + processType(prop) + ';\n');
 			}
 		});
-		result += indentation + "}";
+		result += indentation + '}';
 		return result;
 	}
 };
@@ -87,7 +97,7 @@ var typeProcessors = {
 function processType(type) {
 	var processor = typeProcessors[type.kind];
 	if (!processor) {
-		throw new ReferenceError("Processor for " + type.kind + " types doesn't exist.");
+		throw new ReferenceError('Processor for ' + type.kind + ' types doesn\'t exist.');
 	}
 	return processor(type);
 }
@@ -100,5 +110,8 @@ function toTypeScriptDef(spec) {
 			result.push(indentation + topProcessors[def.kind](_name, def));
 		}
 	});
-	return "declare module ESTree {\n" + result.join("\n\n") + "\n}";
+	return 'declare module ESTree {\n' + result.join('\n\n') + '\n}';
 }
+
+;
+module.exports = exports['default'];
