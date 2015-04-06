@@ -1,26 +1,26 @@
-module ESTree {
-  export interface Node {
+declare module ESTree {
+  interface Node {
     type: string;
     loc: SourceLocation;
   }
 
-  export interface SourceLocation {
+  interface SourceLocation {
     source: string;
     start: Position;
     end: Position;
   }
 
-  export interface Position {
+  interface Position {
     line: number;
     column: number;
   }
 
-  export interface Program extends Node {
+  interface Program extends Node {
     body: Array<Statement>;
     sourceType: string | string;
   }
 
-  export interface Function extends Node {
+  interface Function extends Node {
     id: Identifier;
     params: Array<Pattern>;
     body: BlockStatement;
@@ -28,116 +28,116 @@ module ESTree {
     expression: boolean;
   }
 
-  export interface Statement extends Node {}
+  interface Statement extends Node {}
 
-  export interface EmptyStatement extends Statement {}
+  interface EmptyStatement extends Statement {}
 
-  export interface BlockStatement extends Statement {
+  interface BlockStatement extends Statement {
     body: Array<Statement>;
   }
 
-  export interface ExpressionStatement extends Statement {
+  interface ExpressionStatement extends Statement {
     expression: Expression;
   }
 
-  export interface IfStatement extends Statement {
+  interface IfStatement extends Statement {
     test: Expression;
     consequent: Statement;
     alternate: Statement;
   }
 
-  export interface LabeledStatement extends Statement {
+  interface LabeledStatement extends Statement {
     label: Identifier;
     body: Statement;
   }
 
-  export interface BreakStatement extends Statement {
+  interface BreakStatement extends Statement {
     label: Identifier;
   }
 
-  export interface ContinueStatement extends Statement {
+  interface ContinueStatement extends Statement {
     label: Identifier;
   }
 
-  export interface WithStatement extends Statement {
+  interface WithStatement extends Statement {
     object: Expression;
     body: Statement;
   }
 
-  export interface SwitchStatement extends Statement {
+  interface SwitchStatement extends Statement {
     discriminant: Expression;
     cases: Array<SwitchCase>;
     lexical: boolean;
   }
 
-  export interface ReturnStatement extends Statement {
+  interface ReturnStatement extends Statement {
     argument: Expression;
   }
 
-  export interface ThrowStatement extends Statement {
+  interface ThrowStatement extends Statement {
     argument: Expression;
   }
 
-  export interface TryStatement extends Statement {
+  interface TryStatement extends Statement {
     block: BlockStatement;
     handler: CatchClause;
     finalizer: BlockStatement;
   }
 
-  export interface WhileStatement extends Statement {
+  interface WhileStatement extends Statement {
     test: Expression;
     body: Statement;
   }
 
-  export interface DoWhileStatement extends Statement {
+  interface DoWhileStatement extends Statement {
     body: Statement;
     test: Expression;
   }
 
-  export interface ForStatement extends Statement {
+  interface ForStatement extends Statement {
     init: VariableDeclaration | Expression;
     test: Expression;
     update: Expression;
     body: Statement;
   }
 
-  export interface ForInStatement extends Statement {
+  interface ForInStatement extends Statement {
     left: VariableDeclaration | Expression;
     right: Expression;
     body: Statement;
   }
 
-  export interface DebuggerStatement extends Statement {}
+  interface DebuggerStatement extends Statement {}
 
-  export interface Declaration extends Statement {}
+  interface Declaration extends Statement {}
 
-  export interface FunctionDeclaration extends Function, Declaration {
+  interface FunctionDeclaration extends Function, Declaration {
     id: Identifier;
   }
 
-  export interface VariableDeclaration extends Declaration {
+  interface VariableDeclaration extends Declaration {
     declarations: Array<VariableDeclarator>;
     kind: string | string | string;
   }
 
-  export interface VariableDeclarator extends Node {
+  interface VariableDeclarator extends Node {
     id: Pattern;
     init: Expression;
   }
 
-  export interface Expression extends Node {}
+  interface Expression extends Node {}
 
-  export interface ThisExpression extends Expression {}
+  interface ThisExpression extends Expression {}
 
-  export interface ArrayExpression extends Expression {
+  interface ArrayExpression extends Expression {
     elements: Array<Expression | SpreadElement>;
   }
 
-  export interface ObjectExpression extends Expression {
+  interface ObjectExpression extends Expression {
     properties: Array<Property>;
   }
 
-  export interface Property extends Node {
+  interface Property extends Node {
     key: Expression;
     value: Expression;
     kind: string | string | string;
@@ -146,127 +146,127 @@ module ESTree {
     computed: boolean;
   }
 
-  export interface FunctionExpression extends Function, Expression {}
+  interface FunctionExpression extends Function, Expression {}
 
-  export interface SequenceExpression extends Expression {
+  interface SequenceExpression extends Expression {
     expressions: Array<Expression>;
   }
 
-  export interface UnaryExpression extends Expression {
+  interface UnaryExpression extends Expression {
     operator: UnaryOperator;
     prefix: boolean;
     argument: Expression;
   }
 
-  export interface BinaryExpression extends Expression {
+  interface BinaryExpression extends Expression {
     operator: BinaryOperator;
     left: Expression;
     right: Expression;
   }
 
-  export interface AssignmentExpression extends Expression {
+  interface AssignmentExpression extends Expression {
     operator: AssignmentOperator;
     left: Pattern | MemberExpression;
     right: Expression;
   }
 
-  export interface UpdateExpression extends Expression {
+  interface UpdateExpression extends Expression {
     operator: UpdateOperator;
     argument: Expression;
     prefix: boolean;
   }
 
-  export interface LogicalExpression extends Expression {
+  interface LogicalExpression extends Expression {
     operator: LogicalOperator;
     left: Expression;
     right: Expression;
   }
 
-  export interface ConditionalExpression extends Expression {
+  interface ConditionalExpression extends Expression {
     test: Expression;
     alternate: Expression;
     consequent: Expression;
   }
 
-  export interface CallExpression extends Expression {
+  interface CallExpression extends Expression {
     callee: Expression;
     arguments: Array<Expression | SpreadElement>;
   }
 
-  export interface NewExpression extends CallExpression {}
+  interface NewExpression extends CallExpression {}
 
-  export interface MemberExpression extends Expression, Pattern {
+  interface MemberExpression extends Expression, Pattern {
     object: Expression | Super;
     property: Expression;
     computed: boolean;
   }
 
-  export interface Pattern extends Node {}
+  interface Pattern extends Node {}
 
-  export interface SwitchCase extends Node {
+  interface SwitchCase extends Node {
     test: Expression;
     consequent: Array<Statement>;
   }
 
-  export interface CatchClause extends Node {
+  interface CatchClause extends Node {
     param: Pattern;
     guard: any;
     body: BlockStatement;
   }
 
-  export interface Identifier extends Node, Expression, Pattern {
+  interface Identifier extends Node, Expression, Pattern {
     name: string;
   }
 
-  export interface Literal extends Node, Expression {
+  interface Literal extends Node, Expression {
     value: string | boolean | number | RegExp;
   }
 
-  export interface RegexLiteral extends Literal {
+  interface RegexLiteral extends Literal {
     regex: {
       pattern: string;
       flags: string;
     };
   }
 
-  export type UnaryOperator = string;
+  type UnaryOperator = string;
 
-  export type BinaryOperator = string;
+  type BinaryOperator = string;
 
-  export type LogicalOperator = string;
+  type LogicalOperator = string;
 
-  export type AssignmentOperator = string;
+  type AssignmentOperator = string;
 
-  export type UpdateOperator = string;
+  type UpdateOperator = string;
 
-  export interface ForOfStatement extends ForInStatement {}
+  interface ForOfStatement extends ForInStatement {}
 
-  export interface Super extends Node {}
+  interface Super extends Node {}
 
-  export interface SpreadElement extends Node {
+  interface SpreadElement extends Node {
     argument: Expression;
   }
 
-  export interface ArrowFunctionExpression extends Function, Expression {
+  interface ArrowFunctionExpression extends Function, Expression {
     body: BlockStatement | Expression;
     expression: boolean;
   }
 
-  export interface YieldExpression extends Expression {
+  interface YieldExpression extends Expression {
     argument: Expression;
   }
 
-  export interface TemplateLiteral extends Expression {
+  interface TemplateLiteral extends Expression {
     quasis: Array<TemplateElement>;
     expressions: Array<Expression>;
   }
 
-  export interface TaggedTemplateExpression extends Expression {
+  interface TaggedTemplateExpression extends Expression {
     tag: Expression;
     quasi: TemplateLiteral;
   }
 
-  export interface TemplateElement extends Node {
+  interface TemplateElement extends Node {
     tail: boolean;
     value: {
       cooked: string;
@@ -274,40 +274,40 @@ module ESTree {
     };
   }
 
-  export interface AssignmentProperty extends Property {
+  interface AssignmentProperty extends Property {
     value: Pattern;
     kind: string;
     method: boolean;
   }
 
-  export interface ObjectPattern extends Pattern {
+  interface ObjectPattern extends Pattern {
     properties: Array<AssignmentProperty>;
   }
 
-  export interface ArrayPattern extends Pattern {
+  interface ArrayPattern extends Pattern {
     elements: Array<Pattern>;
   }
 
-  export interface RestElement extends Pattern {
+  interface RestElement extends Pattern {
     argument: Pattern;
   }
 
-  export interface AssignmentPattern extends Pattern {
+  interface AssignmentPattern extends Pattern {
     left: Pattern;
     right: Expression;
   }
 
-  export interface Class extends Node {
+  interface Class extends Node {
     id: Identifier;
     superClass: Expression;
     body: ClassBody;
   }
 
-  export interface ClassBody extends Node {
+  interface ClassBody extends Node {
     body: Array<MethodDefinition>;
   }
 
-  export interface MethodDefinition extends Node {
+  interface MethodDefinition extends Node {
     key: Identifier;
     value: FunctionExpression;
     kind: string | string | string | string;
@@ -315,51 +315,51 @@ module ESTree {
     static: boolean;
   }
 
-  export interface ClassDeclaration extends Class, Declaration {
+  interface ClassDeclaration extends Class, Declaration {
     id: Identifier;
   }
 
-  export interface ClassExpression extends Class, Expression {}
+  interface ClassExpression extends Class, Expression {}
 
-  export interface MetaProperty extends Expression {
+  interface MetaProperty extends Expression {
     meta: Identifier;
     property: Identifier;
   }
 
-  export interface ImportDeclaration extends Node {
+  interface ImportDeclaration extends Node {
     specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>;
     source: Literal;
   }
 
-  export interface ImportSpecifier {
+  interface ImportSpecifier {
     imported: Identifier;
     local: Identifier;
   }
 
-  export interface ImportDefaultSpecifier {
+  interface ImportDefaultSpecifier {
     local: Identifier;
   }
 
-  export interface ImportNamespaceSpecifier {
+  interface ImportNamespaceSpecifier {
     local: Identifier;
   }
 
-  export interface ExportNamedDeclaration extends Node {
+  interface ExportNamedDeclaration extends Node {
     declaration: Declaration;
     specifiers: Array<ExportSpecifier>;
     source: Literal;
   }
 
-  export interface ExportSpecifier {
+  interface ExportSpecifier {
     exported: Identifier;
     local: Identifier;
   }
 
-  export interface ExportDefaultDeclaration extends Node {
+  interface ExportDefaultDeclaration extends Node {
     declaration: Declaration | Expression;
   }
 
-  export interface ExportAllDeclaration extends Node {
+  interface ExportAllDeclaration extends Node {
     source: Literal;
   }
 }

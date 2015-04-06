@@ -21,14 +21,14 @@ var topProcessors = {
 			set[typeof value] = true;
 			return set;
 		}, {});
-		return "export type " + name + " = " + Object.keys(types).join(" | ") + ";";
+		return "type " + name + " = " + Object.keys(types).join(" | ") + ";";
 	},
 
 	"interface": function _interface(name, _ref) {
 		var base = _ref.base;
 		var props = _ref.props;
 
-		var result = "export interface " + name + " ";
+		var result = "interface " + name + " ";
 		if (base.length) {
 			result += "extends " + base.join(", ") + " ";
 		}
@@ -100,5 +100,5 @@ function toTypeScriptDef(spec) {
 			result.push(indentation + topProcessors[def.kind](_name, def));
 		}
 	});
-	return "module ESTree {\n" + result.join("\n\n") + "\n}";
+	return "declare module ESTree {\n" + result.join("\n\n") + "\n}";
 }
