@@ -17,6 +17,8 @@ var lexMarkdown = require("marked").lexer;
 
 var parseSpec = require("./grammar").parse;
 
+var toTypeScriptDef = _interopRequire(require("./to-dts"));
+
 var rootDir = "" + __dirname + "/..";
 
 function merge() {
@@ -42,7 +44,7 @@ function resolveExtends(extension, base) {
 	for (var _name in extension) {
 		var item = extension[_name];
 		if (item.kind === "interface" && !item.base) {
-			var baseItem = result[_name];
+			var baseItem = base[_name];
 			result[_name] = merge(baseItem, {
 				props: merge(baseItem.props, item.props)
 			});
@@ -55,7 +57,7 @@ function resolveExtends(extension, base) {
 
 function writeSpec(name, spec) {
 	return spec.then(function (spec) {
-		return writeFile("" + rootDir + "/formal-data/" + name + ".json", JSON.stringify(spec, null, 2));
+		return Promise.all([writeFile("" + rootDir + "/formal-data/typescript/" + name + ".d.ts", toTypeScriptDef(spec)), writeFile("" + rootDir + "/formal-data/" + name + ".json", JSON.stringify(spec, null, 2))]);
 	});
 }
 

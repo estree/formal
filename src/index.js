@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import {readFile, writeFile} from './fs';
 import {lexer as lexMarkdown} from 'marked';
 import {parse as parseSpec} from './grammar';
+import toTypeScriptDef from './to-dts';
 
 var rootDir = `${__dirname}/..`;
 
@@ -36,10 +37,18 @@ function resolveExtends(extension, base) {
 }
 
 function writeSpec(name, spec) {
-	return spec.then(spec => writeFile(
-		`${rootDir}/formal-data/${name}.json`,
-		JSON.stringify(spec, null, 2)
-	));
+	return spec.then(spec => {
+		return Promise.all([
+			writeFile(
+				`${rootDir}/formal-data/typescript/${name}.d.ts`,
+				toTypeScriptDef(spec)
+			),
+			writeFile(
+				`${rootDir}/formal-data/${name}.json`,
+				JSON.stringify(spec, null, 2)
+			)
+		]);
+	});
 }
 
 var es5 = readSpec('spec');

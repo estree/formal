@@ -2,10 +2,6 @@
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var Promise = _interopRequire(require("bluebird"));
 
 var _fs = require("fs");
@@ -18,3 +14,6 @@ writeFile = Promise.promisify(writeFile);
 
 exports.readFile = readFile;
 exports.writeFile = writeFile;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});

@@ -1,12 +1,13 @@
 {
   "name": "estree-formal",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "ESTree formal data generator.",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run build-code && npm run build-grammar",
     "build-code": "babel src --out-dir dist",
-    "build-grammar": "jison src/grammar.jison -o dist/grammar.js"
+    "build-grammar": "jison src/grammar.jison -o dist/grammar.js",
+    "prepublish": "node ."
   },
   "repository": {
     "type": "git",
@@ -27,11 +28,11 @@
   },
   "homepage": "https://github.com/estree/formal",
   "devDependencies": {
-    "babel": "^4.7.16",
+    "babel": "^5.0.9",
     "jison": "^0.4.15"
   },
   "dependencies": {
-    "bluebird": "^2.9.21",
+    "bluebird": "^2.9.24",
     "marked": "^0.3.3",
     "object-assign": "^2.0.0"
   }
