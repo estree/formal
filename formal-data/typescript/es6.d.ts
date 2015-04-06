@@ -25,7 +25,6 @@ declare module ESTree {
     params: Array<Pattern>;
     body: BlockStatement;
     generator: boolean;
-    expression: boolean;
   }
 
   interface Statement extends Node {}

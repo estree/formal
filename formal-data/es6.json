@@ -125,10 +125,6 @@
       "generator": {
         "kind": "reference",
         "name": "boolean"
-      },
-      "expression": {
-        "kind": "literal",
-        "value": false
       }
     },
     "base": [
