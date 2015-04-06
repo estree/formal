@@ -8,15 +8,15 @@ function indent(callback) {
 	return result;
 }
 
+function unique(value, index, self) { 
+	return self.indexOf(value) === index;
+}
+
 // Processors for top-level definitons.
 var topProcessors = {
 	enum(name, {values}) {
 		// TypeScript doesn't allow enums of literals, so we need to create type union instead.
-		var types = values.reduce((set, value) => {
-			set[typeof value] = true;
-			return set;
-		}, {});
-		return `type ${name} = ${Object.keys(types).join(' | ')};`;
+		return `type ${name} = ${values.map(value => typeof value).filter(unique).join(' | ')};`;
 	},
 
 	interface(name, {base, props}) {
@@ -45,8 +45,8 @@ var typeProcessors = {
 	array: ({base}) => `Array<${processType(base)}>`,
 
 	union: ({types}) => (
-		types
-		.map(processType)
+		types.map(processType)
+		.filter(unique)
 		.filter(type => type !== 'any')
 		.join(' | ')
 	) || 'any',

@@ -17,7 +17,7 @@ declare module ESTree {
 
   interface Program extends Node {
     body: Array<Statement>;
-    sourceType: string | string;
+    sourceType: string;
   }
 
   interface Function extends Node {
@@ -117,7 +117,7 @@ declare module ESTree {
 
   interface VariableDeclaration extends Declaration {
     declarations: Array<VariableDeclarator>;
-    kind: string | string | string;
+    kind: string;
   }
 
   interface VariableDeclarator extends Node {
@@ -140,7 +140,7 @@ declare module ESTree {
   interface Property extends Node {
     key: Expression;
     value: Expression;
-    kind: string | string | string;
+    kind: string;
     method: boolean;
     shorthand: boolean;
     computed: boolean;
@@ -310,7 +310,7 @@ declare module ESTree {
   interface MethodDefinition extends Node {
     key: Identifier;
     value: FunctionExpression;
-    kind: string | string | string | string;
+    kind: string;
     computed: boolean;
     static: boolean;
   }

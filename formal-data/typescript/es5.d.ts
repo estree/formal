@@ -139,7 +139,7 @@ declare module ESTree {
   interface Property extends Node {
     key: Literal | Identifier;
     value: Expression;
-    kind: string | string | string;
+    kind: string;
   }
 
   interface FunctionExpression extends Function, Expression {}
