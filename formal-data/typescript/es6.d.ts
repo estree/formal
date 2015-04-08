@@ -188,7 +188,7 @@ declare module ESTree {
   }
 
   interface CallExpression extends Expression {
-    callee: Expression;
+    callee: Expression | Super;
     arguments: Array<Expression | SpreadElement>;
   }
 

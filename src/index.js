@@ -1,9 +1,12 @@
 import extend from 'object-assign';
 import Promise from 'bluebird';
+import {install as installSourceMaps} from 'source-map-support';
 import {readFile, writeFile} from './fs';
 import {lexer as lexMarkdown} from 'marked';
 import {parse as parseSpec} from './grammar';
 import toTypeScriptDef from './to-dts';
+
+installSourceMaps();
 
 var rootDir = `${__dirname}/..`;
 

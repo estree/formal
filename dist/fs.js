@@ -17,3 +17,4 @@ var writeFileAsync = _Promise2['default'].promisify(_readFile$writeFile.writeFil
 
 exports.readFile = readFileAsync;
 exports.writeFile = writeFileAsync;
+//# sourceMappingURL=fs.js.map

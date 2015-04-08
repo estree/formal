@@ -84,7 +84,17 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return toObject(this.$) 
+
+        return toObject(this.$, function (oldValue, newValue) {
+            // Extend earlier found interface or return new one.
+            if (oldValue.kind === 'interface' && newValue.kind === 'interface' && newValue.base === null) {
+                extend(oldValue.props, newValue.props);
+                return oldValue;
+            } else {
+                return newValue;
+            }
+        });
+    
 break;
 case 2:
 this.$ = intf($$[$0-1], $$[$0], null);
@@ -297,9 +307,16 @@ parse: function parse(input) {
     return true;
 }};
 
-    function toObject(array) {
+    var extend = require('object-assign');
+
+    function toObject(array, resolveConflicts) {
         return array.reduce(function (obj, item) {
-            obj[item.name] = item.value;
+            var oldValue = obj[item.name];
+            var newValue = item.value;
+            if (oldValue && resolveConflicts) {
+                newValue = resolveConflicts(oldValue, newValue);
+            }
+            obj[item.name] = newValue;
             return obj;
         }, Object.create(null));
     }

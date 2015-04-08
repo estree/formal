@@ -1,7 +1,14 @@
 %{
-    function toObject(array) {
+    var extend = require('object-assign');
+
+    function toObject(array, resolveConflicts) {
         return array.reduce(function (obj, item) {
-            obj[item.name] = item.value;
+            var oldValue = obj[item.name];
+            var newValue = item.value;
+            if (oldValue && resolveConflicts) {
+                newValue = resolveConflicts(oldValue, newValue);
+            }
+            obj[item.name] = newValue;
             return obj;
         }, Object.create(null));
     }
@@ -49,7 +56,17 @@
 %% /* language grammar */
 
 program
-    : def* EOF { return toObject($$) }
+    : def* EOF {
+        return toObject($$, function (oldValue, newValue) {
+            // Extend earlier found interface or return new one.
+            if (oldValue.kind === 'interface' && newValue.kind === 'interface' && newValue.base === null) {
+                extend(oldValue.props, newValue.props);
+                return oldValue;
+            } else {
+                return newValue;
+            }
+        });
+    }
     ;
 
 def

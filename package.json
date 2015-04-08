@@ -1,12 +1,14 @@
 {
   "name": "estree-formal",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "ESTree formal data generator.",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run build-code && npm run build-grammar",
-    "build-code": "babel src --out-dir dist",
+    "build-code": "babel src --out-dir dist --source-maps",
     "build-grammar": "jison src/grammar.jison -o dist/grammar.js",
+    "watch": "npm run watch-code",
+    "watch-code": "babel src --out-dir dist --source-maps --watch",
     "prepublish": "node ."
   },
   "repository": {

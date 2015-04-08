@@ -963,8 +963,17 @@
         "value": "CallExpression"
       },
       "callee": {
-        "kind": "reference",
-        "name": "Expression"
+        "kind": "union",
+        "types": [
+          {
+            "kind": "reference",
+            "name": "Expression"
+          },
+          {
+            "kind": "reference",
+            "name": "Super"
+          }
+        ]
       },
       "arguments": {
         "kind": "array",

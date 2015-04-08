@@ -117,3 +117,4 @@ function toTypeScriptDef(spec) {
 
 ;
 module.exports = exports['default'];
+//# sourceMappingURL=to-dts.js.map

@@ -12,6 +12,8 @@ var _Promise = require('bluebird');
 
 var _Promise2 = _interopRequireWildcard(_Promise);
 
+var _installSourceMaps = require('source-map-support');
+
 var _readFile$writeFile = require('./fs');
 
 var _lexMarkdown = require('marked');
@@ -21,6 +23,8 @@ var _parseSpec = require('./grammar');
 var _toTypeScriptDef = require('./to-dts');
 
 var _toTypeScriptDef2 = _interopRequireWildcard(_toTypeScriptDef);
+
+_installSourceMaps.install();
 
 var rootDir = '' + __dirname + '/..';
 
@@ -75,3 +79,4 @@ var es6 = _Promise2['default'].all([readSpec('es6'), es5]).then(function (_ref) 
 
 writeSpec('es5', es5);
 writeSpec('es6', es6);
+//# sourceMappingURL=index.js.map
