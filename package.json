@@ -31,7 +31,8 @@
   "homepage": "https://github.com/estree/formal",
   "devDependencies": {
     "babel": "^5.0.9",
-    "jison": "^0.4.15"
+    "jison": "^0.4.15",
+    "source-map-support": "^0.3.2"
   },
   "dependencies": {
     "bluebird": "^2.9.24",
