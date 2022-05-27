@@ -70,9 +70,11 @@ program
     ;
 
 def
-    : EXTEND INTERFACE NAME object -> intf($NAME, $object, null)
+    : EXTEND INTERFACE NAME '<:' names object -> intf($NAME, $object, $names)
+    | EXTEND INTERFACE NAME object -> intf($NAME, $object, null)
     | INTERFACE NAME '<:' names object -> intf($NAME, $object, $names)
     | INTERFACE NAME object -> intf($NAME, $object, [])
+    | EXTEND ENUM NAME '{' enumBody '}' -> {name: $NAME, value: {kind: 'enum', values: $enumBody}}
     | ENUM NAME '{' enumBody '}' -> {name: $NAME, value: {kind: 'enum', values: $enumBody}}
     ;
 
