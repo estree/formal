@@ -32,6 +32,12 @@ function resolveExtends(extension, base) {
 			result[name] = merge(baseItem, {
 				props: merge(baseItem.props, item.props)
 			});
+		} else if (item.kind === 'enum' && name in base) {
+			let baseItem = base[name];
+
+			result[name] = merge(baseItem, {
+				values: [...new Set(baseItem.values.concat(item.values))]
+			});
 		} else {
 			result[name] = item;
 		}
