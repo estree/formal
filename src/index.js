@@ -52,8 +52,15 @@ function writeSpec(name, spec) {
 	]));
 }
 
-var es5 = readSpec('spec');
-var es6 = Promise.all([readSpec('es6'), es5]).then(([es6, es5]) => resolveExtends(es6, es5));
+const baseSpecName = 'es5';
+const updatedSpecNames = ['es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022'];
 
-writeSpec('es5', es5);
-writeSpec('es6', es6);
+let baseSpec = readSpec(baseSpecName);
+writeSpec('es5', baseSpec);
+
+for (const specName of updatedSpecNames) {
+	baseSpec = Promise.all([readSpec(specName), baseSpec])
+		.then(([spec, baseSpec]) => resolveExtends(spec, baseSpec));
+	writeSpec(specName, baseSpec);
+}
+
