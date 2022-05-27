@@ -31,13 +31,16 @@ declare module ESTree {
   }
 
   interface Program extends Node {
-    body: Array<Directive | Statement>;
+    body: Array<Statement | ModuleDeclaration>;
+    sourceType: string;
   }
 
   interface Function extends Node {
     id?: Identifier;
     params: Array<Pattern>;
     body: FunctionBody;
+    generator: boolean;
+    async: boolean;
   }
 
   interface Statement extends Node {}
@@ -160,17 +163,20 @@ declare module ESTree {
   interface ThisExpression extends Expression {}
 
   interface ArrayExpression extends Expression {
-    elements: Array<Expression>;
+    elements: Array<Expression | SpreadElement>;
   }
 
   interface ObjectExpression extends Expression {
-    properties: Array<Property>;
+    properties: Array<Property | SpreadElement>;
   }
 
   interface Property extends Node {
-    key: Literal | Identifier;
+    key: Expression;
     value: Expression;
     kind: string;
+    method: boolean;
+    shorthand: boolean;
+    computed: boolean;
   }
 
   interface FunctionExpression extends Function, Expression {}
@@ -201,7 +207,7 @@ declare module ESTree {
 
   interface AssignmentExpression extends Expression {
     operator: AssignmentOperator;
-    left: Pattern | Expression;
+    left: Pattern;
     right: Expression;
   }
 
@@ -216,7 +222,7 @@ declare module ESTree {
   type LogicalOperator = string;
 
   interface MemberExpression extends Expression, Pattern {
-    object: Expression;
+    object: Expression | Super;
     property: Expression;
     computed: boolean;
   }
@@ -228,13 +234,13 @@ declare module ESTree {
   }
 
   interface CallExpression extends Expression {
-    callee: Expression;
-    arguments: Array<Expression>;
+    callee: Expression | Super;
+    arguments: Array<Expression | SpreadElement>;
   }
 
   interface NewExpression extends Expression {
     callee: Expression;
-    arguments: Array<Expression>;
+    arguments: Array<Expression | SpreadElement>;
   }
 
   interface SequenceExpression extends Expression {
@@ -242,4 +248,144 @@ declare module ESTree {
   }
 
   interface Pattern extends Node {}
+
+  interface ForOfStatement extends ForInStatement {
+    await: boolean;
+  }
+
+  interface Super extends Node {}
+
+  interface SpreadElement extends Node {
+    argument: Expression;
+  }
+
+  interface ArrowFunctionExpression extends Function, Expression {
+    body: FunctionBody | Expression;
+    expression: boolean;
+    generator: boolean;
+  }
+
+  interface YieldExpression extends Expression {
+    argument?: Expression;
+    delegate: boolean;
+  }
+
+  interface TemplateLiteral extends Expression {
+    quasis: Array<TemplateElement>;
+    expressions: Array<Expression>;
+  }
+
+  interface TaggedTemplateExpression extends Expression {
+    tag: Expression;
+    quasi: TemplateLiteral;
+  }
+
+  interface TemplateElement extends Node {
+    tail: boolean;
+    value: {
+      cooked?: string;
+      raw: string;
+    };
+  }
+
+  interface AssignmentProperty extends Property {
+    value: Pattern;
+    kind: string;
+    method: boolean;
+  }
+
+  interface ObjectPattern extends Pattern {
+    properties: Array<AssignmentProperty | RestElement>;
+  }
+
+  interface ArrayPattern extends Pattern {
+    elements: Array<Pattern>;
+  }
+
+  interface RestElement extends Pattern {
+    argument: Pattern;
+  }
+
+  interface AssignmentPattern extends Pattern {
+    left: Pattern;
+    right: Expression;
+  }
+
+  interface Class extends Node {
+    id?: Identifier;
+    superClass?: Expression;
+    body: ClassBody;
+  }
+
+  interface ClassBody extends Node {
+    body: Array<MethodDefinition>;
+  }
+
+  interface MethodDefinition extends Node {
+    key: Expression;
+    value: FunctionExpression;
+    kind: string;
+    computed: boolean;
+    static: boolean;
+  }
+
+  interface ClassDeclaration extends Class, Declaration {
+    id: Identifier;
+  }
+
+  interface ClassExpression extends Class, Expression {}
+
+  interface MetaProperty extends Expression {
+    meta: Identifier;
+    property: Identifier;
+  }
+
+  interface ModuleDeclaration extends Node {}
+
+  interface ModuleSpecifier extends Node {
+    local: Identifier;
+  }
+
+  interface ImportDeclaration extends ModuleDeclaration {
+    specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>;
+    source: Literal;
+  }
+
+  interface ImportSpecifier extends ModuleSpecifier {
+    imported: Identifier;
+  }
+
+  interface ImportDefaultSpecifier extends ModuleSpecifier {}
+
+  interface ImportNamespaceSpecifier extends ModuleSpecifier {}
+
+  interface ExportNamedDeclaration extends ModuleDeclaration {
+    declaration?: Declaration;
+    specifiers: Array<ExportSpecifier>;
+    source?: Literal;
+  }
+
+  interface ExportSpecifier extends ModuleSpecifier {
+    exported: Identifier;
+  }
+
+  interface AnonymousDefaultExportedFunctionDeclaration extends Function {
+    id: any;
+  }
+
+  interface AnonymousDefaultExportedClassDeclaration extends Class {
+    id: any;
+  }
+
+  interface ExportDefaultDeclaration extends ModuleDeclaration {
+    declaration: AnonymousDefaultExportedFunctionDeclaration | FunctionDeclaration | AnonymousDefaultExportedClassDeclaration | ClassDeclaration | Expression;
+  }
+
+  interface ExportAllDeclaration extends ModuleDeclaration {
+    source: Literal;
+  }
+
+  interface AwaitExpression extends Expression {
+    argument: Expression;
+  }
 }

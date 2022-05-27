@@ -15,34 +15,64 @@ declare module ESTree {
     column: number;
   }
 
+  interface Identifier extends Expression, Pattern {
+    name: string;
+  }
+
+  interface Literal extends Expression {
+    value?: string | boolean | number | RegExp;
+  }
+
+  interface RegExpLiteral extends Literal {
+    regex: {
+      pattern: string;
+      flags: string;
+    };
+  }
+
   interface Program extends Node {
-    body: Array<Statement>;
+    body: Array<Statement | ModuleDeclaration>;
     sourceType: string;
   }
 
   interface Function extends Node {
     id?: Identifier;
     params: Array<Pattern>;
-    body: BlockStatement;
+    body: FunctionBody;
     generator: boolean;
+    async: boolean;
   }
 
   interface Statement extends Node {}
-
-  interface EmptyStatement extends Statement {}
-
-  interface BlockStatement extends Statement {
-    body: Array<Statement>;
-  }
 
   interface ExpressionStatement extends Statement {
     expression: Expression;
   }
 
-  interface IfStatement extends Statement {
-    test: Expression;
-    consequent: Statement;
-    alternate?: Statement;
+  interface Directive extends ExpressionStatement {
+    expression: Literal;
+    directive: string;
+  }
+
+  interface BlockStatement extends Statement {
+    body: Array<Statement>;
+  }
+
+  interface FunctionBody extends BlockStatement {
+    body: Array<Directive | Statement>;
+  }
+
+  interface EmptyStatement extends Statement {}
+
+  interface DebuggerStatement extends Statement {}
+
+  interface WithStatement extends Statement {
+    object: Expression;
+    body: Statement;
+  }
+
+  interface ReturnStatement extends Statement {
+    argument?: Expression;
   }
 
   interface LabeledStatement extends Statement {
@@ -58,19 +88,20 @@ declare module ESTree {
     label?: Identifier;
   }
 
-  interface WithStatement extends Statement {
-    object: Expression;
-    body: Statement;
+  interface IfStatement extends Statement {
+    test: Expression;
+    consequent: Statement;
+    alternate?: Statement;
   }
 
   interface SwitchStatement extends Statement {
     discriminant: Expression;
     cases: Array<SwitchCase>;
-    lexical: boolean;
   }
 
-  interface ReturnStatement extends Statement {
-    argument?: Expression;
+  interface SwitchCase extends Node {
+    test?: Expression;
+    consequent: Array<Statement>;
   }
 
   interface ThrowStatement extends Statement {
@@ -81,6 +112,11 @@ declare module ESTree {
     block: BlockStatement;
     handler?: CatchClause;
     finalizer?: BlockStatement;
+  }
+
+  interface CatchClause extends Node {
+    param?: Pattern;
+    body: BlockStatement;
   }
 
   interface WhileStatement extends Statement {
@@ -101,12 +137,10 @@ declare module ESTree {
   }
 
   interface ForInStatement extends Statement {
-    left: VariableDeclaration | Expression;
+    left: VariableDeclaration | Pattern;
     right: Expression;
     body: Statement;
   }
-
-  interface DebuggerStatement extends Statement {}
 
   interface Declaration extends Statement {}
 
@@ -133,7 +167,7 @@ declare module ESTree {
   }
 
   interface ObjectExpression extends Expression {
-    properties: Array<Property>;
+    properties: Array<Property | SpreadElement>;
   }
 
   interface Property extends Node {
@@ -147,27 +181,13 @@ declare module ESTree {
 
   interface FunctionExpression extends Function, Expression {}
 
-  interface SequenceExpression extends Expression {
-    expressions: Array<Expression>;
-  }
-
   interface UnaryExpression extends Expression {
     operator: UnaryOperator;
     prefix: boolean;
     argument: Expression;
   }
 
-  interface BinaryExpression extends Expression {
-    operator: BinaryOperator;
-    left: Expression;
-    right: Expression;
-  }
-
-  interface AssignmentExpression extends Expression {
-    operator: AssignmentOperator;
-    left: Pattern | MemberExpression;
-    right: Expression;
-  }
+  type UnaryOperator = string;
 
   interface UpdateExpression extends Expression {
     operator: UpdateOperator;
@@ -175,10 +195,36 @@ declare module ESTree {
     prefix: boolean;
   }
 
+  type UpdateOperator = string;
+
+  interface BinaryExpression extends Expression {
+    operator: BinaryOperator;
+    left: Expression;
+    right: Expression;
+  }
+
+  type BinaryOperator = string;
+
+  interface AssignmentExpression extends Expression {
+    operator: AssignmentOperator;
+    left: Pattern;
+    right: Expression;
+  }
+
+  type AssignmentOperator = string;
+
   interface LogicalExpression extends Expression {
     operator: LogicalOperator;
     left: Expression;
     right: Expression;
+  }
+
+  type LogicalOperator = string;
+
+  interface MemberExpression extends Expression, Pattern {
+    object: Expression | Super;
+    property: Expression;
+    computed: boolean;
   }
 
   interface ConditionalExpression extends Expression {
@@ -192,53 +238,20 @@ declare module ESTree {
     arguments: Array<Expression | SpreadElement>;
   }
 
-  interface NewExpression extends CallExpression {}
+  interface NewExpression extends Expression {
+    callee: Expression;
+    arguments: Array<Expression | SpreadElement>;
+  }
 
-  interface MemberExpression extends Expression, Pattern {
-    object: Expression | Super;
-    property: Expression;
-    computed: boolean;
+  interface SequenceExpression extends Expression {
+    expressions: Array<Expression>;
   }
 
   interface Pattern extends Node {}
 
-  interface SwitchCase extends Node {
-    test?: Expression;
-    consequent: Array<Statement>;
+  interface ForOfStatement extends ForInStatement {
+    await: boolean;
   }
-
-  interface CatchClause extends Node {
-    param: Pattern;
-    guard: any;
-    body: BlockStatement;
-  }
-
-  interface Identifier extends Node, Expression, Pattern {
-    name: string;
-  }
-
-  interface Literal extends Node, Expression {
-    value?: string | boolean | number | RegExp;
-  }
-
-  interface RegexLiteral extends Literal {
-    regex: {
-      pattern: string;
-      flags: string;
-    };
-  }
-
-  type UnaryOperator = string;
-
-  type BinaryOperator = string;
-
-  type LogicalOperator = string;
-
-  type AssignmentOperator = string;
-
-  type UpdateOperator = string;
-
-  interface ForOfStatement extends ForInStatement {}
 
   interface Super extends Node {}
 
@@ -247,12 +260,14 @@ declare module ESTree {
   }
 
   interface ArrowFunctionExpression extends Function, Expression {
-    body: BlockStatement | Expression;
+    body: FunctionBody | Expression;
     expression: boolean;
+    generator: boolean;
   }
 
   interface YieldExpression extends Expression {
     argument?: Expression;
+    delegate: boolean;
   }
 
   interface TemplateLiteral extends Expression {
@@ -268,8 +283,8 @@ declare module ESTree {
   interface TemplateElement extends Node {
     tail: boolean;
     value: {
-      cooked: string;
-      value: string;
+      cooked?: string;
+      raw: string;
     };
   }
 
@@ -280,7 +295,7 @@ declare module ESTree {
   }
 
   interface ObjectPattern extends Pattern {
-    properties: Array<AssignmentProperty>;
+    properties: Array<AssignmentProperty | RestElement>;
   }
 
   interface ArrayPattern extends Pattern {
@@ -298,7 +313,7 @@ declare module ESTree {
 
   interface Class extends Node {
     id?: Identifier;
-    superClass: Expression;
+    superClass?: Expression;
     body: ClassBody;
   }
 
@@ -307,7 +322,7 @@ declare module ESTree {
   }
 
   interface MethodDefinition extends Node {
-    key: Identifier;
+    key: Expression;
     value: FunctionExpression;
     kind: string;
     computed: boolean;
@@ -325,40 +340,52 @@ declare module ESTree {
     property: Identifier;
   }
 
-  interface ImportDeclaration extends Node {
+  interface ModuleDeclaration extends Node {}
+
+  interface ModuleSpecifier extends Node {
+    local: Identifier;
+  }
+
+  interface ImportDeclaration extends ModuleDeclaration {
     specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>;
     source: Literal;
   }
 
-  interface ImportSpecifier {
+  interface ImportSpecifier extends ModuleSpecifier {
     imported: Identifier;
-    local: Identifier;
   }
 
-  interface ImportDefaultSpecifier {
-    local: Identifier;
-  }
+  interface ImportDefaultSpecifier extends ModuleSpecifier {}
 
-  interface ImportNamespaceSpecifier {
-    local: Identifier;
-  }
+  interface ImportNamespaceSpecifier extends ModuleSpecifier {}
 
-  interface ExportNamedDeclaration extends Node {
+  interface ExportNamedDeclaration extends ModuleDeclaration {
     declaration?: Declaration;
     specifiers: Array<ExportSpecifier>;
     source?: Literal;
   }
 
-  interface ExportSpecifier {
+  interface ExportSpecifier extends ModuleSpecifier {
     exported: Identifier;
-    local: Identifier;
   }
 
-  interface ExportDefaultDeclaration extends Node {
-    declaration: Declaration | Expression;
+  interface AnonymousDefaultExportedFunctionDeclaration extends Function {
+    id: any;
   }
 
-  interface ExportAllDeclaration extends Node {
+  interface AnonymousDefaultExportedClassDeclaration extends Class {
+    id: any;
+  }
+
+  interface ExportDefaultDeclaration extends ModuleDeclaration {
+    declaration: AnonymousDefaultExportedFunctionDeclaration | FunctionDeclaration | AnonymousDefaultExportedClassDeclaration | ClassDeclaration | Expression;
+  }
+
+  interface ExportAllDeclaration extends ModuleDeclaration {
     source: Literal;
+  }
+
+  interface AwaitExpression extends Expression {
+    argument: Expression;
   }
 }
