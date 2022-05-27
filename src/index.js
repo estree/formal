@@ -27,10 +27,12 @@ function resolveExtends(extension, base) {
 	var result = merge(base);
 	for (let name in extension) {
 		let item = extension[name];
-		if (item.kind === 'interface' && !item.base) {
+		if (item.kind === 'interface' && name in base) {
 			let baseItem = base[name];
+
 			result[name] = merge(baseItem, {
-				props: merge(baseItem.props, item.props)
+				props: merge(baseItem.props, item.props),
+				base: [...new Set(baseItem.base.concat(item.base || []))]
 			});
 		} else if (item.kind === 'enum' && name in base) {
 			let baseItem = base[name];
