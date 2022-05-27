@@ -48,7 +48,7 @@ function resolveExtends(extension, base) {
 }
 
 function writeSpec(name, spec) {
-	return spec.then(spec => Promise.all([
+	return Promise.all([
 		writeFile(
 			`${rootDir}/formal-data/typescript/${name}.d.ts`,
 			toTypeScriptDef(spec)
@@ -57,18 +57,17 @@ function writeSpec(name, spec) {
 			`${rootDir}/formal-data/${name}.json`,
 			JSON.stringify(spec, null, 2)
 		)
-	]));
+	]).then(() => spec);
 }
 
-const baseSpecName = 'es5';
-const updatedSpecNames = ['es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022'];
+function readWriteSpecs(remainingSpecs, baseSpec) {
+	const specName = remainingSpecs.shift();
+	if (!specName)
+		return;
 
-let baseSpec = readSpec(baseSpecName);
-writeSpec('es5', baseSpec);
-
-for (const specName of updatedSpecNames) {
-	baseSpec = Promise.all([readSpec(specName), baseSpec])
-		.then(([spec, baseSpec]) => resolveExtends(spec, baseSpec));
-	writeSpec(specName, baseSpec);
+	readSpec(specName)
+		.then(spec => writeSpec(specName, baseSpec ? resolveExtends(spec, baseSpec) : spec))
+		.then(spec => readWriteSpecs(remainingSpecs, spec));
 }
 
+readWriteSpecs(['es5', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022']);
