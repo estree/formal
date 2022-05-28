@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "bluebird": "^2.9.24",
-    "marked": "^0.3.3",
+    "marked": "^4.0.10",
     "object-assign": "^2.0.0"
   }
 }
