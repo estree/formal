@@ -10,8 +10,12 @@ installSourceMaps();
 
 var rootDir = `${__dirname}/..`;
 
-function merge(...objects) {
+function mergeObj(...objects) {
 	return extend(Object.create(null), ...objects);
+}
+
+function mergeArr(...arrays) {
+	return [...new Set(arrays.flat())];
 }
 
 function readSpec(name) {
@@ -24,21 +28,21 @@ function readSpec(name) {
 }
 
 function resolveExtends(extension, base) {
-	var result = merge(base);
+	var result = mergeObj(base);
 	for (let name in extension) {
 		let item = extension[name];
 		if (item.kind === 'interface' && name in base) {
 			let baseItem = base[name];
 
-			result[name] = merge(baseItem, {
-				props: merge(baseItem.props, item.props),
-				base: [...new Set(baseItem.base.concat(item.base || []))]
+			result[name] = mergeObj(baseItem, {
+				props: mergeObj(baseItem.props, item.props),
+				base: mergeArr(baseItem.base, item.base || [])
 			});
 		} else if (item.kind === 'enum' && name in base) {
 			let baseItem = base[name];
 
-			result[name] = merge(baseItem, {
-				values: [...new Set(baseItem.values.concat(item.values))]
+			result[name] = mergeObj(baseItem, {
+				values: mergeArr(baseItem.values, item.values)
 			});
 		} else {
 			result[name] = item;
