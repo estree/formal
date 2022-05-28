@@ -10,8 +10,12 @@ installSourceMaps();
 
 var rootDir = `${__dirname}/..`;
 
-function merge(...objects) {
+function mergeObj(...objects) {
 	return extend(Object.create(null), ...objects);
+}
+
+function mergeArr(...arrays) {
+	return [...new Set(arrays.flat())];
 }
 
 function readSpec(name) {
@@ -24,13 +28,21 @@ function readSpec(name) {
 }
 
 function resolveExtends(extension, base) {
-	var result = merge(base);
+	var result = mergeObj(base);
 	for (let name in extension) {
 		let item = extension[name];
-		if (item.kind === 'interface' && !item.base) {
+		if (item.kind === 'interface' && name in base) {
 			let baseItem = base[name];
-			result[name] = merge(baseItem, {
-				props: merge(baseItem.props, item.props)
+
+			result[name] = mergeObj(baseItem, {
+				props: mergeObj(baseItem.props, item.props),
+				base: mergeArr(baseItem.base, item.base || [])
+			});
+		} else if (item.kind === 'enum' && name in base) {
+			let baseItem = base[name];
+
+			result[name] = mergeObj(baseItem, {
+				values: mergeArr(baseItem.values, item.values)
 			});
 		} else {
 			result[name] = item;
@@ -40,7 +52,7 @@ function resolveExtends(extension, base) {
 }
 
 function writeSpec(name, spec) {
-	return spec.then(spec => Promise.all([
+	return Promise.all([
 		writeFile(
 			`${rootDir}/formal-data/typescript/${name}.d.ts`,
 			toTypeScriptDef(spec)
@@ -49,11 +61,17 @@ function writeSpec(name, spec) {
 			`${rootDir}/formal-data/${name}.json`,
 			JSON.stringify(spec, null, 2)
 		)
-	]));
+	]).then(() => spec);
 }
 
-var es5 = readSpec('spec');
-var es6 = Promise.all([readSpec('es6'), es5]).then(([es6, es5]) => resolveExtends(es6, es5));
+function readWriteSpecs(remainingSpecs, baseSpec) {
+	const specName = remainingSpecs.shift();
+	if (!specName)
+		return;
 
-writeSpec('es5', es5);
-writeSpec('es6', es6);
+	readSpec(specName)
+		.then(spec => writeSpec(specName, baseSpec ? resolveExtends(spec, baseSpec) : spec))
+		.then(spec => readWriteSpecs(remainingSpecs, spec));
+}
+
+readWriteSpecs(['es5', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022']);

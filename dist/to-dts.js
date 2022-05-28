@@ -88,7 +88,7 @@ var typeProcessors = {
 				})) {
 					propName += '?';
 				}
-				result += indentation + ('' + propName + ': ' + processType(prop) + ';\n');
+				result += indentation + (propName + ': ' + processType(prop) + ';\n');
 			}
 		});
 		result += indentation + '}';

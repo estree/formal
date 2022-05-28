@@ -1,59 +1,75 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-var _extend = require('object-assign');
+var _objectAssign = require('object-assign');
 
-var _extend2 = _interopRequireWildcard(_extend);
+var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
-var _Promise = require('bluebird');
+var _bluebird = require('bluebird');
 
-var _Promise2 = _interopRequireWildcard(_Promise);
+var _bluebird2 = _interopRequireDefault(_bluebird);
 
-var _installSourceMaps = require('source-map-support');
+var _sourceMapSupport = require('source-map-support');
 
-var _readFile$writeFile = require('./fs');
+var _fs = require('./fs');
 
-var _lexMarkdown = require('marked');
+var _marked = require('marked');
 
-var _parseSpec = require('./grammar');
+var _grammar = require('./grammar');
 
-var _toTypeScriptDef = require('./to-dts');
+var _toDts = require('./to-dts');
 
-var _toTypeScriptDef2 = _interopRequireWildcard(_toTypeScriptDef);
+var _toDts2 = _interopRequireDefault(_toDts);
 
-_installSourceMaps.install();
+(0, _sourceMapSupport.install)();
 
-var rootDir = '' + __dirname + '/..';
+var rootDir = __dirname + '/..';
 
-function merge() {
+function mergeObj() {
 	for (var _len = arguments.length, objects = Array(_len), _key = 0; _key < _len; _key++) {
 		objects[_key] = arguments[_key];
 	}
 
-	return _extend2['default'].apply(undefined, [Object.create(null)].concat(objects));
+	return _objectAssign2['default'].apply(undefined, [Object.create(null)].concat(objects));
+}
+
+function mergeArr() {
+	for (var _len2 = arguments.length, arrays = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+		arrays[_key2] = arguments[_key2];
+	}
+
+	return [].concat(_toConsumableArray(new Set(arrays.flat())));
 }
 
 function readSpec(name) {
-	return _readFile$writeFile.readFile('' + rootDir + '/estree/' + name + '.md', 'utf-8').then(_lexMarkdown.lexer).filter(function (token) {
+	return (0, _fs.readFile)(rootDir + '/estree/' + name + '.md', 'utf-8').then(_marked.lexer).filter(function (token) {
 		return token.type === 'code';
 	}).map(function (token) {
 		return token.text;
 	}).all().then(function (chunks) {
-		return _parseSpec.parse(chunks.join('\n'));
+		return (0, _grammar.parse)(chunks.join('\n'));
 	});
 }
 
 function resolveExtends(extension, base) {
-	var result = merge(base);
+	var result = mergeObj(base);
 	for (var _name in extension) {
 		var item = extension[_name];
-		if (item.kind === 'interface' && !item.base) {
+		if (item.kind === 'interface' && _name in base) {
 			var baseItem = base[_name];
-			result[_name] = merge(baseItem, {
-				props: merge(baseItem.props, item.props)
+
+			result[_name] = mergeObj(baseItem, {
+				props: mergeObj(baseItem.props, item.props),
+				base: mergeArr(baseItem.base, item.base || [])
+			});
+		} else if (item.kind === 'enum' && _name in base) {
+			var baseItem = base[_name];
+
+			result[_name] = mergeObj(baseItem, {
+				values: mergeArr(baseItem.values, item.values)
 			});
 		} else {
 			result[_name] = item;
@@ -63,20 +79,21 @@ function resolveExtends(extension, base) {
 }
 
 function writeSpec(name, spec) {
-	return spec.then(function (spec) {
-		return _Promise2['default'].all([_readFile$writeFile.writeFile('' + rootDir + '/formal-data/typescript/' + name + '.d.ts', _toTypeScriptDef2['default'](spec)), _readFile$writeFile.writeFile('' + rootDir + '/formal-data/' + name + '.json', JSON.stringify(spec, null, 2))]);
+	return _bluebird2['default'].all([(0, _fs.writeFile)(rootDir + '/formal-data/typescript/' + name + '.d.ts', (0, _toDts2['default'])(spec)), (0, _fs.writeFile)(rootDir + '/formal-data/' + name + '.json', JSON.stringify(spec, null, 2))]).then(function () {
+		return spec;
 	});
 }
 
-var es5 = readSpec('spec');
-var es6 = _Promise2['default'].all([readSpec('es6'), es5]).then(function (_ref) {
-	var _ref2 = _slicedToArray(_ref, 2);
+function readWriteSpecs(remainingSpecs, baseSpec) {
+	var specName = remainingSpecs.shift();
+	if (!specName) return;
 
-	var es6 = _ref2[0];
-	var es5 = _ref2[1];
-	return resolveExtends(es6, es5);
-});
+	readSpec(specName).then(function (spec) {
+		return writeSpec(specName, baseSpec ? resolveExtends(spec, baseSpec) : spec);
+	}).then(function (spec) {
+		return readWriteSpecs(remainingSpecs, spec);
+	});
+}
 
-writeSpec('es5', es5);
-writeSpec('es6', es6);
+readWriteSpecs(['es5', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022']);
 //# sourceMappingURL=index.js.map
