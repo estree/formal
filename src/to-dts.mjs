@@ -30,14 +30,14 @@ function isUnique(value, index, self) {
 /** @type {{ [K in keyof grammar.TopLevelParams]: (param: grammar.TopLevelParams[K], name: string) => string }} */
 var topProcessors = {
   enum({ values }, name) {
-    return `type ${name} = ${values
+    return `export type ${name} = ${values
       .map(value => JSON.stringify(value))
       .filter(isUnique)
       .join(' | ')};`;
   },
 
   interface({ base, props }, name) {
-    var result = `interface ${name} `;
+    var result = `export interface ${name} `;
     if (base.length) {
       result += `extends ${base.join(', ')} `;
     }
@@ -114,13 +114,9 @@ function processType(type) {
 export default function toTypeScriptDef(spec) {
   /** @type {string[]} */
   var result = [];
-  indent(() => {
-    for (let name in spec) {
-      let def = spec[name];
-      result.push(indentation + processWith(topProcessors, def, name));
-    }
-  });
-  return `declare module ESTree {
-${result.join('\n\n')}
-}`;
+  for (let name in spec) {
+    let def = spec[name];
+    result.push(indentation + processWith(topProcessors, def, name));
+  }
+  return result.join('\n\n');
 }
