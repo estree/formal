@@ -30,9 +30,8 @@ function isUnique(value, index, self) {
 /** @type {{ [K in keyof grammar.TopLevelParams]: (param: grammar.TopLevelParams[K], name: string) => string }} */
 var topProcessors = {
   enum({ values }, name) {
-    // TypeScript doesn't allow enums of literals, so we need to create type union instead.
     return `type ${name} = ${values
-      .map(value => typeof value)
+      .map(value => JSON.stringify(value))
       .filter(isUnique)
       .join(' | ')};`;
   },
@@ -45,11 +44,8 @@ var topProcessors = {
     var items = Object.create(null),
       hasItems = false;
     for (let prop in props) {
-      // Filter out useless "type: string" from desdendant types.
-      if (name === 'Node' || prop !== 'type') {
-        items[prop] = props[prop];
-        hasItems = true;
-      }
+      items[prop] = props[prop];
+      hasItems = true;
     }
     return result + (hasItems ? typeProcessors.object({ items }) : '{}');
   }
@@ -58,7 +54,7 @@ var topProcessors = {
 // Processors (code generators) for specific types.
 /** @type {{ [K in keyof grammar.TypeParams]: (param: grammar.TypeParams[K]) => string }} */
 var typeProcessors = {
-  literal: ({ value }) => (value === null ? 'any' : typeof value),
+  literal: ({ value }) => JSON.stringify(value),
 
   reference: ({ name }) => name,
 
@@ -102,7 +98,7 @@ var typeProcessors = {
  * @param {Args} args
  */
 function processWith(processors, obj, ...args) {
-  let processor = (processors)[obj.kind];
+  let processor = processors[obj.kind];
   if (!processor) {
     throw new ReferenceError(`Processor for ${obj.kind} types doesn't exist.`);
   }
