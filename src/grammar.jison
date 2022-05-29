@@ -1,6 +1,4 @@
 %{
-    var extend = require('object-assign');
-
     function toObject(array, resolveConflicts) {
         return array.reduce(function (obj, item) {
             var oldValue = obj[item.name];
@@ -60,7 +58,7 @@ program
         return toObject($$, function (oldValue, newValue) {
             // Extend earlier found interface or return new one.
             if (oldValue.kind === 'interface' && newValue.kind === 'interface' && newValue.base === null) {
-                extend(oldValue.props, newValue.props);
+                Object.assign(oldValue.props, newValue.props);
                 return oldValue;
             } else {
                 return newValue;

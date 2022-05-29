@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noEmit": true
+  },
+  "include": ["src/*.mjs", "dist/grammar.mjs.d.ts"],
+  "exclude": ["dist/grammar.mjs"]
+}
