@@ -1,20 +1,5 @@
 import * as grammar from '../dist/grammar.mjs';
 
-var indentation = '';
-
-/**
- * @template T
- * @param {() => T} callback
- * @returns {T}
- */
-function indent(callback) {
-  var old = indentation;
-  indentation += '  ';
-  var result = callback();
-  indentation = old;
-  return result;
-}
-
 /**
  * @template T
  * @param {T} value
@@ -32,11 +17,28 @@ var topProcessors = {
   enum({ values }, name) {
     return `export type ${name} = ${processType({
       kind: 'union',
-      types: values.map(value => ({ kind: 'literal', value })),
+      types: values.map(value => ({ kind: 'literal', value }))
     })};`;
   },
 
-  interface({ base, props }, name) {
+  interface({ base, props }, name, unions, spec) {
+    let addBaseNode = false;
+    base = base.filter(base => {
+      let union = unions[base];
+      if (union) {
+        addBaseNode = addBaseNode || extendsNode(spec, name);
+        union.push(name);
+        return false;
+      } else {
+        return true;
+      }
+    });
+    if (name in unions) {
+      return '';
+    }
+    if (addBaseNode && !base.some(base => extendsNode(spec, base))) {
+      base.unshift('Node');
+    }
     var result = `export interface ${name} `;
     if (base.length) {
       result += `extends ${base.join(', ')} `;
@@ -64,21 +66,17 @@ var typeProcessors = {
   object: ({ items }) => {
     if (Object.keys(items).length === 0) return '{}';
     var result = '{\n';
-    indent(() => {
-      for (let propName in items) {
-        let prop = items[propName];
-        if (
-          prop.kind === 'union' &&
-          prop.types.some(
-            type => type.kind === 'literal' && type.value === null
-          )
-        ) {
-          propName += '?';
-        }
-        result += indentation + `${propName}: ${processType(prop)};\n`;
+    for (let propName in items) {
+      let prop = items[propName];
+      if (
+        prop.kind === 'union' &&
+        prop.types.some(type => type.kind === 'literal' && type.value === null)
+      ) {
+        propName += '?';
       }
-    });
-    result += indentation + '}';
+      result += `${propName}: ${processType(prop)};\n`;
+    }
+    result += '}';
     return result;
   }
 };
@@ -105,13 +103,47 @@ function processType(type) {
   return processWith(typeProcessors, type);
 }
 
+function extendsNode(spec, name) {
+  return name === 'Node' || spec[name].base.some(base => extendsNode(spec, base));
+}
+
 /** @param {grammar.Spec} spec */
 export default function toTypeScriptDef(spec) {
-  /** @type {string[]} */
+  /** @type {Record<string, string[]>} */
+  var unions = Object.create(null);
+  for (let name in spec) {
+    let def = spec[name];
+    if (def.kind === 'interface' && Object.keys(def.props).length === 0) {
+      unions[name] = [];
+    }
+  }
   var result = [];
   for (let name in spec) {
     let def = spec[name];
-    result.push(indentation + processWith(topProcessors, def, name));
+    result.push(processWith(topProcessors, def, name, unions, spec));
   }
-  return result.join('\n\n');
+  for (let name in unions) {
+    let union = unions[name];
+    result.push(
+      `export type ${name} = ${name}_ & (${union
+        .map(item => `\n| ${item}`)
+        .join('')}\n);`
+    );
+  }
+  let indent = '';
+  return result
+    .filter(Boolean)
+    .join('\n\n')
+    .split('\n')
+    .map(line => {
+      if (/^[\])}]/.test(line)) {
+        indent = indent.slice(2);
+      }
+      line = indent + line;
+      if (/[{([]$/.test(line)) {
+        indent += '  ';
+      }
+      return line;
+    })
+    .join('\n');
 }
