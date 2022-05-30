@@ -30,10 +30,10 @@ function isUnique(value, index, self) {
 /** @type {{ [K in keyof grammar.TopLevelParams]: (param: grammar.TopLevelParams[K], name: string) => string }} */
 var topProcessors = {
   enum({ values }, name) {
-    return `export type ${name} = ${values
-      .map(value => JSON.stringify(value))
-      .filter(isUnique)
-      .join(' | ')};`;
+    return `export type ${name} = ${processType({
+      kind: 'union',
+      types: values.map(value => ({ kind: 'literal', value })),
+    })};`;
   },
 
   interface({ base, props }, name) {
@@ -41,13 +41,7 @@ var topProcessors = {
     if (base.length) {
       result += `extends ${base.join(', ')} `;
     }
-    var items = Object.create(null),
-      hasItems = false;
-    for (let prop in props) {
-      items[prop] = props[prop];
-      hasItems = true;
-    }
-    return result + (hasItems ? typeProcessors.object({ items }) : '{}');
+    return result + typeProcessors.object({ items: props });
   }
 };
 
@@ -68,6 +62,7 @@ var typeProcessors = {
       .join(' | ') || 'any',
 
   object: ({ items }) => {
+    if (Object.keys(items).length === 0) return '{}';
     var result = '{\n';
     indent(() => {
       for (let propName in items) {
