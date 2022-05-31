@@ -132,7 +132,10 @@ export default function toTypeScriptDef(spec) {
   var result = [];
   for (let name in spec) {
     let def = spec[name];
-    result.push(processWith(topProcessors, def, name, unions, spec));
+    let processed = processWith(topProcessors, def, name, unions, spec);
+    if (processed) {
+      result.push(processed);
+    }
   }
   for (let name in unions) {
     let union = unions[name];
@@ -144,7 +147,6 @@ export default function toTypeScriptDef(spec) {
   }
   let indent = '';
   return result
-    .filter(Boolean)
     .join('\n\n')
     .split('\n')
     .map(line => {
