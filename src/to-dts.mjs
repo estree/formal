@@ -41,7 +41,26 @@ var topProcessors = {
     }
     var result = `export interface ${name} `;
     if (base.length) {
-      result += `extends ${base.join(', ')} `;
+      result += `extends ${base
+        .map(base => {
+          let excludeFields = Object.keys(props).filter(field => {
+            let baseFieldType = getBaseField(spec, base, field);
+            let fieldType = props[field];
+            if (!baseFieldType) {
+              return false;
+            }
+            if (baseFieldType.kind === 'reference' && fieldType.kind === 'literal' && baseFieldType.name === typeof fieldType.value) {
+              return false;
+            }
+            return true;
+          });
+          return excludeFields.length === 0
+            ? base
+            : `Omit<${base}, ${excludeFields
+                .map(name => JSON.stringify(name))
+                .join(' | ')}>`;
+        })
+        .join(', ')} `;
     }
     return result + typeProcessors.object({ items: props });
   }
@@ -104,8 +123,8 @@ function processType(type) {
 }
 
 /**
- * @param {grammar.Spec} spec 
- * @param {string} name 
+ * @param {grammar.Spec} spec
+ * @param {string} name
  * @returns {boolean}
  */
 function extendsNode(spec, name) {
@@ -117,6 +136,29 @@ function extendsNode(spec, name) {
     return false;
   }
   return def.base.some(base => extendsNode(spec, base));
+}
+
+/**
+ * @param {grammar.Spec} spec
+ * @param {string} name
+ * @param {string} field
+ * @returns {grammar.Type?}
+ */
+function getBaseField(spec, name, field) {
+  let def = spec[name];
+  if (def.kind !== 'interface') {
+    return null;
+  }
+  if (field in def.props) {
+    return def.props[field];
+  }
+  for (let base of def.base) {
+    let baseField = getBaseField(spec, base, field);
+    if (baseField) {
+      return baseField;
+    }
+  }
+  return null;
 }
 
 /** @param {grammar.Spec} spec */

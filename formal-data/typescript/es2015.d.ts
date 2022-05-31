@@ -49,7 +49,7 @@ export interface ExpressionStatement extends Node {
   expression: Expression;
 }
 
-export interface Directive extends ExpressionStatement {
+export interface Directive extends Omit<ExpressionStatement, "expression"> {
   expression: Literal;
   directive: string;
 }
@@ -59,7 +59,7 @@ export interface BlockStatement extends Node {
   body: Array<Statement>;
 }
 
-export interface FunctionBody extends BlockStatement {
+export interface FunctionBody extends Omit<BlockStatement, "body"> {
   body: Array<Directive | Statement>;
 }
 
@@ -162,7 +162,7 @@ export interface ForInStatement extends Node {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends Function {
+export interface FunctionDeclaration extends Omit<Function, "id"> {
   type: "FunctionDeclaration";
   id: Identifier;
 }
@@ -283,7 +283,7 @@ export interface SequenceExpression extends Node {
   expressions: Array<Expression>;
 }
 
-export interface ForOfStatement extends ForInStatement {
+export interface ForOfStatement extends Omit<ForInStatement, "type"> {
   type: "ForOfStatement";
 }
 
@@ -296,7 +296,7 @@ export interface SpreadElement extends Node {
   argument: Expression;
 }
 
-export interface ArrowFunctionExpression extends Function {
+export interface ArrowFunctionExpression extends Omit<Function, "body"> {
   type: "ArrowFunctionExpression";
   body: FunctionBody | Expression;
   expression: boolean;
@@ -330,7 +330,7 @@ export interface TemplateElement extends Node {
   };
 }
 
-export interface AssignmentProperty extends Property {
+export interface AssignmentProperty extends Omit<Property, "type" | "value" | "kind"> {
   type: "Property";
   value: Pattern;
   kind: "init";
@@ -378,7 +378,7 @@ export interface MethodDefinition extends Node {
   static: boolean;
 }
 
-export interface ClassDeclaration extends Class {
+export interface ClassDeclaration extends Omit<Class, "id"> {
   type: "ClassDeclaration";
   id: Identifier;
 }
@@ -428,12 +428,12 @@ export interface ExportSpecifier extends ModuleSpecifier {
   exported: Identifier;
 }
 
-export interface AnonymousDefaultExportedFunctionDeclaration extends Function {
+export interface AnonymousDefaultExportedFunctionDeclaration extends Omit<Function, "id"> {
   type: "FunctionDeclaration";
   id: null;
 }
 
-export interface AnonymousDefaultExportedClassDeclaration extends Class {
+export interface AnonymousDefaultExportedClassDeclaration extends Omit<Class, "id"> {
   type: "ClassDeclaration";
   id: null;
 }

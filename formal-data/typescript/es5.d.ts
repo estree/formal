@@ -47,7 +47,7 @@ export interface ExpressionStatement extends Node {
   expression: Expression;
 }
 
-export interface Directive extends ExpressionStatement {
+export interface Directive extends Omit<ExpressionStatement, "expression"> {
   expression: Literal;
   directive: string;
 }
@@ -57,7 +57,7 @@ export interface BlockStatement extends Node {
   body: Array<Statement>;
 }
 
-export interface FunctionBody extends BlockStatement {
+export interface FunctionBody extends Omit<BlockStatement, "body"> {
   body: Array<Directive | Statement>;
 }
 
@@ -160,7 +160,7 @@ export interface ForInStatement extends Node {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends Function {
+export interface FunctionDeclaration extends Omit<Function, "id"> {
   type: "FunctionDeclaration";
   id: Identifier;
 }
