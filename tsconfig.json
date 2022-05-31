@@ -5,8 +5,9 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
-    "noEmit": true
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/*.mjs", "dist/grammar.mjs.d.ts"],
+  "include": ["src/*.mjs", "dist/grammar.mjs.d.ts", "formal-data/typescript/*.d.ts"],
   "exclude": ["dist/grammar.mjs"]
 }
