@@ -26,7 +26,7 @@ var topProcessors = {
     base = base.filter(base => {
       let union = unions[base];
       if (union) {
-        addBaseNode = addBaseNode || extendsNode(spec, name);
+        addBaseNode = addBaseNode || extendsInterface(spec, name, 'Node');
         union.push(name);
         return false;
       } else {
@@ -36,7 +36,7 @@ var topProcessors = {
     if (name in unions) {
       return '';
     }
-    if (addBaseNode && !base.some(base => extendsNode(spec, base))) {
+    if (addBaseNode && !base.some(base => extendsInterface(spec, base, 'Node'))) {
       base.unshift('Node');
     }
     var result = `export interface ${name} `;
@@ -54,6 +54,9 @@ var topProcessors = {
             }
             let fieldTypeJSON = JSON.stringify(fieldType);
             if (baseFieldType.kind === 'union' && baseFieldType.types.some(type => JSON.stringify(type) === fieldTypeJSON)) {
+              return false;
+            }
+            if (baseFieldType.kind === 'reference' && fieldType.kind === 'reference' && extendsInterface(spec, fieldType.name, baseFieldType.name)) {
               return false;
             }
             return true;
@@ -129,17 +132,18 @@ function processType(type) {
 /**
  * @param {grammar.Spec} spec
  * @param {string} name
+ * @param {string} baseName
  * @returns {boolean}
  */
-function extendsNode(spec, name) {
-  if (name === 'Node') {
+function extendsInterface(spec, name, baseName) {
+  if (name === baseName) {
     return true;
   }
   let def = spec[name];
   if (def.kind !== 'interface') {
     return false;
   }
-  return def.base.some(base => extendsNode(spec, base));
+  return def.base.some(base => extendsInterface(spec, base, baseName));
 }
 
 /**

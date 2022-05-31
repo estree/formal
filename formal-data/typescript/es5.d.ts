@@ -47,7 +47,7 @@ export interface ExpressionStatement extends Node {
   expression: Expression;
 }
 
-export interface Directive extends Omit<ExpressionStatement, "expression"> {
+export interface Directive extends ExpressionStatement {
   expression: Literal;
   directive: string;
 }
