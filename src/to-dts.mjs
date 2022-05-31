@@ -12,7 +12,7 @@ function isUnique(value, index, self) {
 }
 
 // Processors for top-level definitons.
-/** @type {{ [K in keyof grammar.TopLevelParams]: (param: grammar.TopLevelParams[K], name: string) => string }} */
+/** @type {{ [K in keyof grammar.TopLevelParams]: (param: grammar.TopLevelParams[K], name: string, unions: Record<string, string[]>, spec: grammar.Spec) => string }} */
 var topProcessors = {
   enum({ values }, name) {
     return `export type ${name} = ${processType({
@@ -103,8 +103,20 @@ function processType(type) {
   return processWith(typeProcessors, type);
 }
 
+/**
+ * @param {grammar.Spec} spec 
+ * @param {string} name 
+ * @returns {boolean}
+ */
 function extendsNode(spec, name) {
-  return name === 'Node' || spec[name].base.some(base => extendsNode(spec, base));
+  if (name === 'Node') {
+    return true;
+  }
+  let def = spec[name];
+  if (def.kind !== 'interface') {
+    return false;
+  }
+  return def.base.some(base => extendsNode(spec, base));
 }
 
 /** @param {grammar.Spec} spec */
