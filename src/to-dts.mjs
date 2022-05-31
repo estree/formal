@@ -140,7 +140,7 @@ export default function toTypeScriptDef(spec) {
   for (let name in unions) {
     let union = unions[name];
     result.push(
-      `export type ${name} = ${name}_ & (${union
+      `export type ${name} = (${union
         .map(item => `\n| ${item}`)
         .join('')}\n);`
     );

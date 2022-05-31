@@ -454,7 +454,7 @@ export interface AwaitExpression extends Node {
   argument: Expression;
 }
 
-export type Statement = Statement_ & (
+export type Statement = (
   | ExpressionStatement
   | BlockStatement
   | EmptyStatement
@@ -475,13 +475,13 @@ export type Statement = Statement_ & (
   | Declaration
 );
 
-export type Declaration = Declaration_ & (
+export type Declaration = (
   | FunctionDeclaration
   | VariableDeclaration
   | ClassDeclaration
 );
 
-export type Expression = Expression_ & (
+export type Expression = (
   | Identifier
   | Literal
   | ThisExpression
@@ -507,7 +507,7 @@ export type Expression = Expression_ & (
   | AwaitExpression
 );
 
-export type Pattern = Pattern_ & (
+export type Pattern = (
   | Identifier
   | MemberExpression
   | ObjectPattern
@@ -516,7 +516,7 @@ export type Pattern = Pattern_ & (
   | AssignmentPattern
 );
 
-export type ModuleDeclaration = ModuleDeclaration_ & (
+export type ModuleDeclaration = (
   | ImportDeclaration
   | ExportNamedDeclaration
   | ExportDefaultDeclaration

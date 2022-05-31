@@ -278,7 +278,7 @@ export interface SequenceExpression extends Node {
   expressions: Array<Expression>;
 }
 
-export type Statement = Statement_ & (
+export type Statement = (
   | ExpressionStatement
   | BlockStatement
   | EmptyStatement
@@ -299,12 +299,12 @@ export type Statement = Statement_ & (
   | Declaration
 );
 
-export type Declaration = Declaration_ & (
+export type Declaration = (
   | FunctionDeclaration
   | VariableDeclaration
 );
 
-export type Expression = Expression_ & (
+export type Expression = (
   | Identifier
   | Literal
   | ThisExpression
@@ -323,7 +323,7 @@ export type Expression = Expression_ & (
   | SequenceExpression
 );
 
-export type Pattern = Pattern_ & (
+export type Pattern = (
   | Identifier
   | MemberExpression
 );
