@@ -160,7 +160,7 @@ export interface ForInStatement extends Node {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends Omit<Function, "id"> {
+export interface FunctionDeclaration extends Function {
   type: "FunctionDeclaration";
   id: Identifier;
 }

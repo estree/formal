@@ -163,7 +163,7 @@ export interface ForInStatement extends Node {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends Omit<Function, "id"> {
+export interface FunctionDeclaration extends Function {
   type: "FunctionDeclaration";
   id: Identifier;
 }
@@ -332,7 +332,7 @@ export interface TemplateElement extends Node {
   };
 }
 
-export interface AssignmentProperty extends Omit<Property, "type" | "value" | "kind"> {
+export interface AssignmentProperty extends Omit<Property, "type" | "value"> {
   type: "Property";
   value: Pattern;
   kind: "init";
@@ -380,7 +380,7 @@ export interface MethodDefinition extends Node {
   static: boolean;
 }
 
-export interface ClassDeclaration extends Omit<Class, "id"> {
+export interface ClassDeclaration extends Class {
   type: "ClassDeclaration";
   id: Identifier;
 }
@@ -431,12 +431,12 @@ export interface ExportSpecifier extends Omit<ModuleSpecifier, "local"> {
   local: Identifier | Literal;
 }
 
-export interface AnonymousDefaultExportedFunctionDeclaration extends Omit<Function, "id"> {
+export interface AnonymousDefaultExportedFunctionDeclaration extends Function {
   type: "FunctionDeclaration";
   id: null;
 }
 
-export interface AnonymousDefaultExportedClassDeclaration extends Omit<Class, "id"> {
+export interface AnonymousDefaultExportedClassDeclaration extends Class {
   type: "ClassDeclaration";
   id: null;
 }

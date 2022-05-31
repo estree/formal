@@ -52,6 +52,10 @@ var topProcessors = {
             if (baseFieldType.kind === 'reference' && fieldType.kind === 'literal' && baseFieldType.name === typeof fieldType.value) {
               return false;
             }
+            let fieldTypeJSON = JSON.stringify(fieldType);
+            if (baseFieldType.kind === 'union' && baseFieldType.types.some(type => JSON.stringify(type) === fieldTypeJSON)) {
+              return false;
+            }
             return true;
           });
           return excludeFields.length === 0
